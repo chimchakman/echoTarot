@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1771465486212,
+  "projectRoot": "/Users/sunghyunkim/Code/Xcode/echoTarot",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "echoTarot.swiftpm": {
+      "path": "echoTarot.swiftpm",
+      "purpose": null,
+      "fileCount": 3,
+      "lastAccessed": 1771465486207,
+      "keyFiles": [
+        "ContentView.swift",
+        "MyApp.swift",
+        "Package.swift"
+      ]
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}
