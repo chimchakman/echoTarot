@@ -12,9 +12,11 @@ struct IdleStateView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .scaledToFit()
-                    .frame(maxHeight: 400)
+                    .frame(maxWidth: 500)
                     .accessibilityLabel("에코 타로")
                     .padding(.horizontal, 30)
+                    .padding(.top, 65)
+                    
                     
                 
                 Spacer()
@@ -29,7 +31,7 @@ struct IdleStateView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .scaledToFit()
-                    .frame(maxHeight: 800)
+                    .frame(maxHeight: 750)
                     .accessibilityHidden(true)
                     .padding(.horizontal, 20)
                     .padding(.top, 100)
