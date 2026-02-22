@@ -23,7 +23,7 @@ struct VolumeSettingView: View {
                 .accessibilityValue("\(Int(viewModel.speechVolume * 100))퍼센트")
             }
             .padding()
-            .background(Color.white.opacity(0.1))
+            .background(Color.white.opacity(0.25))
             .cornerRadius(12)
 
             VStack(alignment: .leading, spacing: 8) {
@@ -44,7 +44,7 @@ struct VolumeSettingView: View {
                 .accessibilityValue(speedLabel)
             }
             .padding()
-            .background(Color.white.opacity(0.1))
+            .background(Color.white.opacity(0.25))
             .cornerRadius(12)
         }
     }

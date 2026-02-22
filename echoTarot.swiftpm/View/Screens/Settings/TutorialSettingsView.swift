@@ -13,7 +13,7 @@ struct TutorialSettingsView: View {
             }
             .tint(.indigo)
             .padding()
-            .background(Color.white.opacity(0.1))
+            .background(Color.white.opacity(0.25))
             .cornerRadius(12)
             .accessibilityLabel("튜토리얼 활성화")
             .accessibilityValue(viewModel.tutorialEnabled ? "켜짐" : "꺼짐")

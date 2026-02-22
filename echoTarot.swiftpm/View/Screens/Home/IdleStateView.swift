@@ -34,7 +34,7 @@ struct IdleStateView: View {
                     .frame(maxHeight: 750)
                     .accessibilityHidden(true)
                     .padding(.horizontal, 20)
-                    .padding(.top, 100)
+                    .padding(.top, 50)
                 
                 Spacer()
 
@@ -46,36 +46,36 @@ struct IdleStateView: View {
                 Spacer()
                 
                 // Spread selector
-//                Button(action: {
-//                    viewModel.changeSpread()
-//                }) {
-//                    HStack {
-//                        Image(systemName: viewModel.selectedSpread == .oneCard ? "1.circle.fill" : "3.circle.fill")
-//                        Text(viewModel.selectedSpread.koreanName)
-//                    }
-//                    .font(.title3)
-//                    .foregroundColor(.white)
-//                    .padding(.horizontal, 24)
-//                    .padding(.vertical, 12)
-//                    .background(Color.indigo.opacity(0.6))
-//                    .cornerRadius(20)
-//                }
-//                .accessibilityLabel("스프레드: \(viewModel.selectedSpread.koreanName)")
-//                .accessibilityHint("탭하여 변경")
-//                .padding(.vertical, 20)
+                Button(action: {
+                    viewModel.changeSpread()
+                }) {
+                    HStack {
+                        Image(systemName: viewModel.selectedSpread == .oneCard ? "1.circle.fill" : "3.circle.fill")
+                        Text(viewModel.selectedSpread.koreanName)
+                    }
+                    .font(.title3)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .background(Color.indigo.opacity(0.6))
+                    .cornerRadius(20)
+                }
+                .accessibilityLabel("스프레드: \(viewModel.selectedSpread.koreanName)")
+                .accessibilityHint("탭하여 변경")
+                .padding(.bottom, 20)
                 
-                Spacer()
                 
                 // Start button
                 Text("화면을 탭하여 시작")
                     .font(.title2)
                     .foregroundColor(.white.opacity(0.8))
-                    .padding(.bottom, 90)
+                    .padding(.bottom, 60)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(Rectangle())
             .onTapGesture {
                 viewModel.startReading()
+            
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel("에코 타로. \(viewModel.selectedSpread.koreanName) 스프레드")

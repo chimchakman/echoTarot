@@ -35,7 +35,7 @@ struct SettingsView: View {
                     }
                     .tint(.indigo)
                     .padding()
-                    .background(Color.white.opacity(0.1))
+                    .background(Color.white.opacity(0.25))
                     .cornerRadius(12)
                     .accessibilityLabel("햅틱 피드백")
                     .accessibilityValue(viewModel.hapticEnabled ? "켜짐" : "꺼짐")
@@ -52,7 +52,7 @@ struct SettingsView: View {
                             }
                             .foregroundColor(.white)
                             .padding()
-                            .background(Color.white.opacity(0.1))
+                            .background(Color.white.opacity(0.25))
                             .cornerRadius(12)
                         }
                         .accessibilityHint("튜토리얼을 다시 볼 수 있습니다")
@@ -66,7 +66,7 @@ struct SettingsView: View {
                             }
                             .foregroundColor(.red)
                             .padding()
-                            .background(Color.red.opacity(0.1))
+                            .background(Color.red.opacity(0.25))
                             .cornerRadius(12)
                         }
                         .accessibilityHint("모든 설정을 기본값으로 되돌립니다")
