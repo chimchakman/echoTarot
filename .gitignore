@@ -1,1 +1,12 @@
 .DS_Store
+
+# OMC (oh-my-claudecode) files
+.omc/
+
+# Swift Package Manager
+.swiftpm/
+.build/
+
+# Xcode user-specific files
+xcuserdata/
+*.xcuserstate

@@ -2,8 +2,8 @@ import Foundation
 import SwiftUI
 
 enum AppScreen: String, CaseIterable, Sendable {
-    case home = "홈"
     case logs = "기록"
+    case home = "홈"
     case settings = "설정"
 
     var icon: String {
