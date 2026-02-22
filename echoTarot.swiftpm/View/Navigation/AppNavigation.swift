@@ -24,10 +24,13 @@ struct AppNavigation: View {
             }
             .transition(.opacity)
 
-            // Tab bar at bottom
+            // Page indicator at bottom
             VStack {
                 Spacer()
-                tabBar
+                PageIndicator(
+                    totalPages: AppScreen.allCases.count,
+                    currentPage: AppScreen.allCases.firstIndex(of: navigationState.currentScreen) ?? 0
+                )
             }
         }
         .fullScreenGestures(
@@ -41,34 +44,6 @@ struct AppNavigation: View {
         }
     }
 
-    private var tabBar: some View {
-        HStack(spacing: 0) {
-            ForEach(AppScreen.allCases, id: \.self) { screen in
-                tabButton(for: screen)
-            }
-        }
-        .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(.ultraThinMaterial)
-    }
-
-    private func tabButton(for screen: AppScreen) -> some View {
-        Button(action: {
-            navigationState.navigate(to: screen)
-        }) {
-            VStack(spacing: 4) {
-                Image(systemName: screen.icon)
-                    .font(.system(size: 24))
-                Text(screen.rawValue)
-                    .font(.caption)
-            }
-            .foregroundColor(navigationState.currentScreen == screen ? .white : .white.opacity(0.5))
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-        }
-        .accessibilityLabel(screen.accessibilityLabel)
-        .accessibilityAddTraits(navigationState.currentScreen == screen ? .isSelected : [])
-    }
 }
 
 struct TutorialSheet: View {
@@ -86,8 +61,8 @@ struct TutorialSheet: View {
                             title: "제스처 안내",
                             items: [
                                 ("탭", "주요 액션 실행"),
-                                ("왼쪽 스와이프", "다음 화면으로 이동"),
-                                ("오른쪽 스와이프", "이전 화면으로 이동"),
+                                ("왼쪽 스와이프", "다음 화면으로 이동 (기록 → 홈 → 설정)"),
+                                ("오른쪽 스와이프", "이전 화면으로 이동 (설정 → 홈 → 기록)"),
                                 ("위로 스와이프", "확인/진행"),
                                 ("아래로 스와이프", "취소/뒤로"),
                                 ("핀치 인", "설정 열기"),
