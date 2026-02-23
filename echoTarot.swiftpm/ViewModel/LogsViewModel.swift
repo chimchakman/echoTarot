@@ -17,7 +17,7 @@ final class LogsViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let allCards = TarotCardData.allCards
+    private let allCards: [TarotCard] = TarotCardData.allCards
 
     init() {
         loadReadings()
@@ -122,5 +122,34 @@ final class LogsViewModel: ObservableObject {
     func getAllHashtags() -> [String] {
         let allTags = readings.flatMap { $0.hashtags }
         return Array(Set(allTags)).sorted()
+    }
+
+    // MARK: - Card Dictionary Methods
+
+    func getCardsBySuit(_ suit: TarotSuit) -> [TarotCard] {
+        return allCards.filter { $0.suit == suit }
+    }
+
+    func getReadings(for cardId: String) -> [any ReadingProtocol] {
+        var result = readings.filter { $0.cardIds.contains(cardId) }
+
+        if let hashtag = selectedHashtag {
+            result = result.filter { $0.hashtags.contains(hashtag) }
+        }
+
+        switch sortOption {
+        case .dateDescending:
+            result.sort { $0.date > $1.date }
+        case .dateAscending:
+            result.sort { $0.date < $1.date }
+        case .cardGroup:
+            result.sort { $0.cardIds.first ?? "" < $1.cardIds.first ?? "" }
+        }
+
+        return result
+    }
+
+    func getReadingCount(for cardId: String) -> Int {
+        return readings.filter { $0.cardIds.contains(cardId) }.count
     }
 }

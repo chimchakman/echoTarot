@@ -1,9 +1,15 @@
 import SwiftUI
 
+enum LogsTab {
+    case readings
+    case dictionary
+}
+
 struct LogsView: View {
     @StateObject private var viewModel = LogsViewModel()
     @State private var selectedReading: (any ReadingProtocol)?
     @State private var showFilterSheet = false
+    @State private var selectedTab: LogsTab = .readings
 
     var body: some View {
         VStack(spacing: 0) {
@@ -27,19 +33,38 @@ struct LogsView: View {
             }
             .padding()
 
-            if viewModel.selectedHashtag != nil || viewModel.selectedCardId != nil {
-                activeFiltersView
+            Picker("보기 모드", selection: $selectedTab) {
+                Text("리딩 목록")
+                    .tag(LogsTab.readings)
+                Text("카드 사전")
+                    .tag(LogsTab.dictionary)
             }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            .padding(.bottom, 8)
+            .onChange(of: selectedTab) { newValue in
+                HapticService.shared.selection()
+                SpeechService.shared.speak(newValue == .readings ? "리딩 목록" : "카드 사전")
+            }
+            .accessibilityLabel("보기 모드 선택")
 
-            if viewModel.isLoading {
-                Spacer()
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                Spacer()
-            } else if viewModel.filteredReadings.isEmpty {
-                emptyStateView
+            if selectedTab == .readings {
+                if viewModel.selectedHashtag != nil || viewModel.selectedCardId != nil {
+                    activeFiltersView
+                }
+
+                if viewModel.isLoading {
+                    Spacer()
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    Spacer()
+                } else if viewModel.filteredReadings.isEmpty {
+                    emptyStateView
+                } else {
+                    readingsList
+                }
             } else {
-                readingsList
+                TarotCardDictionaryView(viewModel: viewModel)
             }
         }
         .sheet(isPresented: $showFilterSheet) {
