@@ -48,16 +48,16 @@ final class NavigationState: ObservableObject {
         let screens = AppScreen.allCases
         guard let currentIndex = screens.firstIndex(of: currentScreen) else { return }
 
-        let newIndex = currentIndex > 0 ? currentIndex - 1 : screens.count - 1
-        navigate(to: screens[newIndex])
+        guard currentIndex > 0 else { return }
+        navigate(to: screens[currentIndex - 1])
     }
 
     func navigateRight() {
         let screens = AppScreen.allCases
         guard let currentIndex = screens.firstIndex(of: currentScreen) else { return }
 
-        let newIndex = currentIndex < screens.count - 1 ? currentIndex + 1 : 0
-        navigate(to: screens[newIndex])
+        guard currentIndex < screens.count - 1 else { return }
+        navigate(to: screens[currentIndex + 1])
     }
 
     func openSettings() {
