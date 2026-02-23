@@ -27,7 +27,7 @@ struct QuestionRecordingView: View {
                 viewModel.questionAudioURL = nil
                 HapticService.shared.tap()
                 SpeechService.shared.speak("질문 녹음을 건너뜁니다")
-                viewModel.drawCards()
+                viewModel.state = .hashtagInput
             }) {
                 Text("건너뛰기")
                     .font(.body)

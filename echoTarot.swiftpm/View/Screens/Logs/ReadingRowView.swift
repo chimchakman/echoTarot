@@ -9,7 +9,7 @@ struct ReadingRowView: View {
             HStack {
                 Text(formatDate(reading.date))
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.6))
+                    .foregroundColor(.white.opacity(0.8))
 
                 Spacer()
 
@@ -70,7 +70,7 @@ struct ReadingRowView: View {
             }
         }
         .padding()
-        .background(Color.white.opacity(0.1))
+        .background(Color.black.opacity(0.4))
         .cornerRadius(12)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)

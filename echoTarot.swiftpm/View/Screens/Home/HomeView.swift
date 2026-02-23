@@ -11,6 +11,8 @@ struct HomeView: View {
                 IdleStateView(viewModel: viewModel)
             case .questionRecording:
                 QuestionRecordingView(viewModel: viewModel)
+            case .hashtagInput:
+                HashtagInputView(viewModel: viewModel)
             case .cardDrawing:
                 CardDrawingView(viewModel: viewModel)
             case .cardRevealed:

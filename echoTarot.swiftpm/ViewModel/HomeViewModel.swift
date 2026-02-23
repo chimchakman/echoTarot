@@ -4,6 +4,7 @@ import SwiftUI
 enum HomeState: Equatable {
     case idle
     case questionRecording
+    case hashtagInput
     case cardDrawing
     case cardRevealed
     case readingRecording
@@ -19,6 +20,7 @@ final class HomeViewModel: ObservableObject {
     @Published var questionAudioURL: URL?
     @Published var readingAudioURL: URL?
     @Published var isAnimating = false
+    @Published var hashtags: [String] = []
 
     private let allCards = TarotCardData.allCards
 
@@ -31,10 +33,10 @@ final class HomeViewModel: ObservableObject {
     func completeQuestionRecording(audioURL: URL) {
         questionAudioURL = audioURL
         HapticService.shared.success()
-        SpeechService.shared.speak("질문이 녹음되었습니다. 카드를 뽑겠습니다.")
+        SpeechService.shared.speak("질문이 녹음되었습니다. 태그를 선택하세요.")
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.drawCards()
+            self?.state = .hashtagInput
         }
     }
 
@@ -103,6 +105,26 @@ final class HomeViewModel: ObservableObject {
         saveReading()
     }
 
+    func completeHashtagInput(selectedHashtags: [String]) {
+        hashtags = selectedHashtags
+        HapticService.shared.success()
+        SpeechService.shared.speak("태그가 선택되었습니다. 카드를 뽑겠습니다.")
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            self?.drawCards()
+        }
+    }
+
+    func skipHashtagInput() {
+        hashtags = []
+        HapticService.shared.tap()
+        SpeechService.shared.speak("태그 선택을 건너뜁니다. 카드를 뽑겠습니다.")
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            self?.drawCards()
+        }
+    }
+
     func saveReading() {
         do {
             try PersistenceManager.shared.saveReading(
@@ -110,7 +132,8 @@ final class HomeViewModel: ObservableObject {
                 questionAudioPath: questionAudioURL?.path,
                 readingAudioPath: readingAudioURL?.path,
                 cardIds: drawnCards.map { $0.id },
-                cardReversals: cardReversals
+                cardReversals: cardReversals,
+                hashtags: hashtags
             )
             HapticService.shared.success()
             SpeechService.shared.speak("리딩이 저장되었습니다.")
@@ -133,6 +156,7 @@ final class HomeViewModel: ObservableObject {
         questionAudioURL = nil
         readingAudioURL = nil
         isAnimating = false
+        hashtags = []
         selectedSpread = SettingsManager.shared.defaultSpread
     }
 
