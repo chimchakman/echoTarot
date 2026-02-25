@@ -15,10 +15,10 @@ struct ReadingRowView: View {
 
                 Text(spreadTypeText)
                     .font(.caption)
-                    .foregroundColor(.indigo)
+                    .foregroundColor(.white.opacity(0.8))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(Color.indigo.opacity(0.2))
+                    .background(Color.indigo.opacity(0.6))
                     .cornerRadius(8)
             }
 
@@ -70,7 +70,7 @@ struct ReadingRowView: View {
             }
         }
         .padding()
-        .background(Color.black.opacity(0.4))
+        .background(Color.black.opacity(0.5))
         .cornerRadius(12)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)

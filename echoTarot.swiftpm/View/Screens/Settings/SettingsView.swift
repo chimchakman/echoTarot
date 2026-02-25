@@ -9,7 +9,7 @@ struct SettingsView: View {
             VStack(spacing: 24) {
                 Text("설정")
                     .font(.title)
-                    .fontWeight(.bold)
+                    .fontWeight(.heavy)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
@@ -35,7 +35,8 @@ struct SettingsView: View {
                     }
                     .tint(.indigo)
                     .padding()
-                    .background(Color.white.opacity(0.25))
+                    .background(Color.black.opacity(0.5))
+                    .foregroundColor(.white)
                     .cornerRadius(12)
                     .accessibilityLabel("햅틱 피드백")
                     .accessibilityValue(viewModel.hapticEnabled ? "켜짐" : "꺼짐")
@@ -52,7 +53,7 @@ struct SettingsView: View {
                             }
                             .foregroundColor(.white)
                             .padding()
-                            .background(Color.white.opacity(0.25))
+                            .background(Color.black.opacity(0.5))
                             .cornerRadius(12)
                         }
                         .accessibilityHint("튜토리얼을 다시 볼 수 있습니다")
@@ -64,9 +65,9 @@ struct SettingsView: View {
                                 Label("모든 설정 초기화", systemImage: "trash")
                                 Spacer()
                             }
-                            .foregroundColor(.red)
+                            .foregroundColor(.white)
                             .padding()
-                            .background(Color.red.opacity(0.25))
+                            .background(Color.red.opacity(0.5))
                             .cornerRadius(12)
                         }
                         .accessibilityHint("모든 설정을 기본값으로 되돌립니다")
@@ -100,6 +101,7 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
                 .font(.headline)
+                .fontWeight(.heavy)
                 .foregroundColor(.white.opacity(0.8))
                 .padding(.horizontal)
 

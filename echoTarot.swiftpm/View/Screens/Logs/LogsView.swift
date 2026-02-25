@@ -138,11 +138,11 @@ struct LogsView: View {
 
             Text("기록이 없습니다")
                 .font(.title2)
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(.white.opacity(0.8))
 
             Text("홈 화면에서 첫 리딩을 시작해보세요")
                 .font(.body)
-                .foregroundColor(.white.opacity(0.4))
+                .foregroundColor(.white.opacity(0.6))
 
             Spacer()
         }

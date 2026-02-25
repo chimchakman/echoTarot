@@ -31,7 +31,7 @@ struct SpreadSettingsView: View {
                     }
                     .foregroundColor(.white)
                     .padding()
-                    .background(viewModel.defaultSpread == spread ? Color.indigo.opacity(0.3) : Color.white.opacity(0.25))
+                    .background(viewModel.defaultSpread == spread ? Color.indigo.opacity(0.5) : Color.black.opacity(0.5))
                     .cornerRadius(12)
                 }
                 .accessibilityLabel("\(spread.koreanName): \(spread.description)")
