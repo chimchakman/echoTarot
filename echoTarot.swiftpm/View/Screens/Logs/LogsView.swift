@@ -33,19 +33,32 @@ struct LogsView: View {
             }
             .padding()
 
-            Picker("보기 모드", selection: $selectedTab) {
-                Text("리딩 목록")
-                    .tag(LogsTab.readings)
-                Text("카드 사전")
-                    .tag(LogsTab.dictionary)
+            // Custom segmented control with better visibility
+            HStack(spacing: 0) {
+                segmentButton(
+                    title: "리딩 목록",
+                    isSelected: selectedTab == .readings,
+                    action: {
+                        selectedTab = .readings
+                        HapticService.shared.selection()
+                        SpeechService.shared.speak("리딩 목록")
+                    }
+                )
+
+                segmentButton(
+                    title: "카드 사전",
+                    isSelected: selectedTab == .dictionary,
+                    action: {
+                        selectedTab = .dictionary
+                        HapticService.shared.selection()
+                        SpeechService.shared.speak("카드 사전")
+                    }
+                )
             }
-            .pickerStyle(.segmented)
+            .background(Color.white.opacity(0.15))
+            .cornerRadius(10)
             .padding(.horizontal)
             .padding(.bottom, 8)
-            .onChange(of: selectedTab) { newValue in
-                HapticService.shared.selection()
-                SpeechService.shared.speak(newValue == .readings ? "리딩 목록" : "카드 사전")
-            }
             .accessibilityLabel("보기 모드 선택")
 
             if selectedTab == .readings {
@@ -108,6 +121,24 @@ struct LogsView: View {
             .padding(.horizontal)
         }
         .padding(.bottom, 8)
+    }
+
+    private func segmentButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline)
+                .fontWeight(isSelected ? .semibold : .regular)
+                .foregroundColor(isSelected ? .black : .white.opacity(0.9))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(
+                    isSelected ? Color.white : Color.black.opacity(0.4)
+                )
+                .cornerRadius(8)
+                .padding(2)
+        }
+        .accessibilityLabel(title)
+        .accessibilityHint(isSelected ? "선택됨" : "탭하여 선택")
     }
 
     private func filterChip(text: String, onRemove: @escaping () -> Void) -> some View {

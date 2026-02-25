@@ -53,7 +53,7 @@ struct TarotCardDictionaryView: View {
             .padding(.vertical, 8)
         }
         .padding()
-        .background(Color.black.opacity(0.3))
+        .background(Color.black.opacity(0.5))
         .cornerRadius(12)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(suit.koreanName), \(cards.count)장의 카드")
