@@ -64,9 +64,8 @@ final class HomeViewModel: ObservableObject {
                 self.cardReversals.append(isReversed)
 
                 // Speak card info
-                let position = self.selectedSpread.positionNames[i]
                 let reversedText = isReversed ? "역방향" : ""
-                SpeechService.shared.speak("\(position), \(card.koreanName) \(reversedText)")
+                SpeechService.shared.speak("\(i + 1)번째 카드, \(card.koreanName) \(reversedText)")
 
                 // Check if all cards are drawn
                 if self.drawnCards.count == self.selectedSpread.cardCount {
@@ -86,10 +85,9 @@ final class HomeViewModel: ObservableObject {
         // Speak all card meanings
         var speechTexts: [String] = []
         for (index, card) in drawnCards.enumerated() {
-            let position = selectedSpread.positionNames[index]
             let isReversed = cardReversals[index]
             let meaning = SettingsManager.shared.effectiveMeaning(for: card, isReversed: isReversed)
-            speechTexts.append("\(position): \(card.koreanName). \(meaning)")
+            speechTexts.append("\(index + 1)번째 카드: \(card.koreanName). \(meaning)")
         }
 
         SpeechService.shared.speakWithPause(speechTexts, pauseDuration: 1.0)

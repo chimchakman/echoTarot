@@ -46,13 +46,13 @@ struct CardDrawingView: View {
                 .frame(maxWidth: 100)
                 .rotationEffect(.degrees(viewModel.cardReversals[index] ? 180 : 0))
                 .transition(.scale.combined(with: .opacity))
-                .accessibilityLabel("\(viewModel.selectedSpread.positionNames[index]): 카드가 뽑혔습니다")
+                .accessibilityLabel("\(index + 1)번째 카드: 카드가 뽑혔습니다")
         } else {
             // Empty slot
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.white.opacity(0.3), lineWidth: 2)
                 .frame(width: 80, height: 120)
-                .accessibilityLabel("\(viewModel.selectedSpread.positionNames[index]): 대기 중")
+                .accessibilityLabel("\(index + 1)번째 카드: 대기 중")
         }
     }
 }

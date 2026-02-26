@@ -22,15 +22,25 @@ struct ReadingDetailView: View {
                             if let card = viewModel.getCard(for: cardId) {
                                 AccessibleCard(
                                     card: card,
-                                    isReversed: reading.cardReversals[index],
-                                    position: positionName(for: index)
+                                    isReversed: reading.cardReversals[index]
                                 )
                                 .tag(index)
                             }
                         }
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .automatic))
+                    .tabViewStyle(.page(indexDisplayMode: .never))
                     .frame(height: 400)
+
+                    if reading.cardIds.count > 1 {
+                        HStack(spacing: 8) {
+                            ForEach(0..<reading.cardIds.count, id: \.self) { index in
+                                Circle()
+                                    .fill(index == currentCardIndex ? Color.accentColor : Color.secondary.opacity(0.4))
+                                    .frame(width: 8, height: 8)
+                            }
+                        }
+                        .accessibilityHidden(true)
+                    }
 
                     VStack(spacing: 16) {
                         if let questionPath = reading.questionAudioPath {
@@ -104,14 +114,6 @@ struct ReadingDetailView: View {
             } message: {
                 Text("삭제된 리딩은 복구할 수 없습니다.")
             }
-        }
-    }
-
-    private func positionName(for index: Int) -> String {
-        if reading.spreadType == "oneCard" {
-            return "메시지"
-        } else {
-            return ["과거", "현재", "미래"][index]
         }
     }
 

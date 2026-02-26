@@ -17,14 +17,24 @@ struct CardRevealedView: View {
                 ForEach(Array(viewModel.drawnCards.enumerated()), id: \.offset) { index, card in
                     AccessibleCard(
                         card: card,
-                        isReversed: viewModel.cardReversals[index],
-                        position: viewModel.selectedSpread.positionNames[index]
+                        isReversed: viewModel.cardReversals[index]
                     )
                     .tag(index)
                 }
             }
-            .tabViewStyle(.page(indexDisplayMode: .automatic))
+            .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(maxHeight: 500)
+
+            if viewModel.drawnCards.count > 1 {
+                HStack(spacing: 8) {
+                    ForEach(0..<viewModel.drawnCards.count, id: \.self) { index in
+                        Circle()
+                            .fill(index == currentCardIndex ? Color.white : Color.white.opacity(0.4))
+                            .frame(width: 8, height: 8)
+                    }
+                }
+                .accessibilityHidden(true)
+            }
 
             Spacer()
 

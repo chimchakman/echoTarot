@@ -20,15 +20,8 @@ enum TarotSpread: String, Codable, CaseIterable, Sendable {
 
     var description: String {
         switch self {
-        case .oneCard: return "하나의 카드로 오늘의 메시지를 받아보세요"
-        case .threeCard: return "과거, 현재, 미래를 나타내는 세 장의 카드"
-        }
-    }
-
-    var positionNames: [String] {
-        switch self {
-        case .oneCard: return ["메시지"]
-        case .threeCard: return ["과거", "현재", "미래"]
+        case .oneCard: return "한 장의 카드로 지금 이 순간을 살펴보세요"
+        case .threeCard: return "세 장의 카드로 다양한 관점을 탐색해보세요"
         }
     }
 }
