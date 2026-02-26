@@ -125,9 +125,11 @@ struct CardReadingsListView: View {
             Text(card.suit.koreanName)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+
+            CardImageDescriptionButton(card: card)
         }
         .padding(.top, 16)
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .contain)
         .accessibilityLabel("\(card.koreanName), \(card.suit.koreanName)")
     }
 
