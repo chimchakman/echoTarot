@@ -88,7 +88,7 @@ final class HomeViewModel: ObservableObject {
         for (index, card) in drawnCards.enumerated() {
             let position = selectedSpread.positionNames[index]
             let isReversed = cardReversals[index]
-            let meaning = isReversed ? card.reversedMeaning : card.uprightMeaning
+            let meaning = SettingsManager.shared.effectiveMeaning(for: card, isReversed: isReversed)
             speechTexts.append("\(position): \(card.koreanName). \(meaning)")
         }
 

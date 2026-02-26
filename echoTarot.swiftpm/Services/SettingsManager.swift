@@ -76,4 +76,69 @@ final class SettingsManager: ObservableObject {
         default: return false
         }
     }
+
+    // MARK: - Card Keyword Customization
+
+    func customization(for cardId: String) -> CardKeywordCustomization {
+        settings.cardKeywordCustomizations[cardId] ?? .empty
+    }
+
+    func setCustomization(_ customization: CardKeywordCustomization, for cardId: String) {
+        if customization.isEmpty {
+            settings.cardKeywordCustomizations.removeValue(forKey: cardId)
+        } else {
+            settings.cardKeywordCustomizations[cardId] = customization
+        }
+    }
+
+    func addUprightKeyword(_ keyword: String, for cardId: String) {
+        var c = customization(for: cardId)
+        let trimmed = keyword.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, !c.addedUpright.contains(trimmed) else { return }
+        c.addedUpright.append(trimmed)
+        setCustomization(c, for: cardId)
+    }
+
+    func removeUprightKeyword(_ keyword: String, for cardId: String, baseKeywords: [String]) {
+        var c = customization(for: cardId)
+        if c.addedUpright.contains(keyword) {
+            c.addedUpright.removeAll { $0 == keyword }
+        } else if baseKeywords.contains(keyword), !c.removedUpright.contains(keyword) {
+            c.removedUpright.append(keyword)
+        }
+        setCustomization(c, for: cardId)
+    }
+
+    func addReversedKeyword(_ keyword: String, for cardId: String) {
+        var c = customization(for: cardId)
+        let trimmed = keyword.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, !c.addedReversed.contains(trimmed) else { return }
+        c.addedReversed.append(trimmed)
+        setCustomization(c, for: cardId)
+    }
+
+    func removeReversedKeyword(_ keyword: String, for cardId: String, baseKeywords: [String]) {
+        var c = customization(for: cardId)
+        if c.addedReversed.contains(keyword) {
+            c.addedReversed.removeAll { $0 == keyword }
+        } else if baseKeywords.contains(keyword), !c.removedReversed.contains(keyword) {
+            c.removedReversed.append(keyword)
+        }
+        setCustomization(c, for: cardId)
+    }
+
+    func effectiveMeaning(for card: TarotCard, isReversed: Bool) -> String {
+        let c = customization(for: card.id)
+        let base = (isReversed ? card.reversedMeaning : card.uprightMeaning)
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+        let removed = isReversed ? c.removedReversed : c.removedUpright
+        let added   = isReversed ? c.addedReversed   : c.addedUpright
+        return (base.filter { !removed.contains($0) } + added).joined(separator: ", ")
+    }
+
+    func resetKeywords(for cardId: String) {
+        settings.cardKeywordCustomizations.removeValue(forKey: cardId)
+    }
 }

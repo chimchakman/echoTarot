@@ -6,6 +6,8 @@ struct AccessibleCard: View {
     let position: String?
     let showMeaning: Bool
 
+    @ObservedObject private var settingsManager = SettingsManager.shared
+
     init(card: TarotCard, isReversed: Bool = false, position: String? = nil, showMeaning: Bool = true) {
         self.card = card
         self.isReversed = isReversed
@@ -41,7 +43,7 @@ struct AccessibleCard: View {
                 }
 
                 if showMeaning {
-                    Text(isReversed ? card.reversedMeaning : card.uprightMeaning)
+                    Text(settingsManager.effectiveMeaning(for: card, isReversed: isReversed))
                         .font(.body)
                         .foregroundColor(.white.opacity(0.9))
                         .multilineTextAlignment(.center)
@@ -65,7 +67,7 @@ struct AccessibleCard: View {
             description += ", 역방향"
         }
         if showMeaning {
-            description += ". \(isReversed ? card.reversedMeaning : card.uprightMeaning)"
+            description += ". \(settingsManager.effectiveMeaning(for: card, isReversed: isReversed))"
         }
         return description
     }
