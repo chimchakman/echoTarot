@@ -23,28 +23,32 @@ struct IdleStateView: View {
             }
             
             VStack {
-                
+
                 Spacer()
-                
+
                 // Table image
                 Image("table")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .scaledToFit()
                     .frame(maxHeight: 750)
-                    .accessibilityHidden(true)
                     .padding(.horizontal, 20)
                     .padding(.top, 50)
-                
+                    .onTapGesture {
+                        viewModel.startReading()
+                    }
+                    .accessibilityLabel("타로 테이블")
+                    .accessibilityHint("탭하여 타로 리딩 시작")
+
                 Spacer()
 
-                
+
             }
             
             VStack {
-                
+
                 Spacer()
-                
+
                 // Spread selector
                 Button(action: {
                     viewModel.changeSpread()
@@ -63,23 +67,14 @@ struct IdleStateView: View {
                 .accessibilityLabel("스프레드: \(viewModel.selectedSpread.koreanName)")
                 .accessibilityHint("탭하여 변경")
                 .padding(.bottom, 20)
-                
-                
-                // Start button
-                Text("화면을 탭하여 시작")
+
+
+                // Start instruction
+                Text("테이블을 탭하여 시작")
                     .font(.title2)
                     .foregroundColor(.white.opacity(0.8))
                     .padding(.bottom, 60)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .contentShape(Rectangle())
-            .onTapGesture {
-                viewModel.startReading()
-            
-            }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("에코 타로. \(viewModel.selectedSpread.koreanName) 스프레드")
-            .accessibilityHint("탭하여 타로 리딩 시작")
         }
     }
 }

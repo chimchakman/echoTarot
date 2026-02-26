@@ -36,7 +36,7 @@ struct VoiceRecordButton: View {
                     .monospacedDigit()
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: 300)
         .contentShape(Rectangle())
         .onTapGesture {
             toggleRecording()

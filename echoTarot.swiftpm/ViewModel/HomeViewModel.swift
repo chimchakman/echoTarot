@@ -149,6 +149,12 @@ final class HomeViewModel: ObservableObject {
         saveReading()
     }
 
+    func cancelReading() {
+        HapticService.shared.impact(.medium)
+        SpeechService.shared.stop()
+        reset()
+    }
+
     func reset() {
         state = .idle
         drawnCards = []

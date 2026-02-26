@@ -5,6 +5,7 @@ struct QuestionRecordingView: View {
 
     var body: some View {
         VStack(spacing: 24) {
+            Spacer()
             Text("질문을 녹음하세요")
                 .font(.title)
                 .fontWeight(.bold)
@@ -15,13 +16,11 @@ struct QuestionRecordingView: View {
                 .foregroundColor(.white.opacity(0.8))
 
             Spacer()
-
             VoiceRecordButton(recordingType: .question) { url in
                 viewModel.completeQuestionRecording(audioURL: url)
             }
 
             Spacer()
-
             // Skip button
             Button(action: {
                 viewModel.questionAudioURL = nil

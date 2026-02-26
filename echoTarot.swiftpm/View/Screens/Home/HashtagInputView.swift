@@ -9,6 +9,7 @@ struct HashtagInputView: View {
 
     var body: some View {
         VStack(spacing: 24) {
+            Spacer()
             Text("태그를 선택하세요")
                 .font(.title)
                 .fontWeight(.bold)
