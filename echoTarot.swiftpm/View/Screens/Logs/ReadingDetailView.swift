@@ -23,8 +23,7 @@ struct ReadingDetailView: View {
                                 AccessibleCard(
                                     card: card,
                                     isReversed: reading.cardReversals[index],
-                                    position: positionName(for: index),
-                                    showImageDescriptionButton: true
+                                    position: positionName(for: index)
                                 )
                                 .tag(index)
                             }

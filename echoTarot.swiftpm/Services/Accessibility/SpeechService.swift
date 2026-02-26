@@ -16,7 +16,11 @@ final class SpeechService: NSObject, ObservableObject {
     }
 
     func speak(_ text: String, completion: (() -> Void)? = nil) {
-        stop()
+        if synthesizer.isSpeaking {
+            synthesizer.stopSpeaking(at: .immediate)
+        }
+        completionHandler = nil
+        isSpeaking = false
 
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")

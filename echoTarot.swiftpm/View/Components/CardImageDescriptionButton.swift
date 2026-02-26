@@ -1,38 +1,38 @@
 import SwiftUI
 
 struct CardImageDescriptionButton: View {
-    let card: TarotCard
-
+    let cardId: String
     @ObservedObject private var speechService = SpeechService.shared
-
-    private var description: String? {
-        TarotImageDescriptionService.shared.description(for: card.id)
-    }
+    @State private var isThisButtonSpeaking = false
 
     var body: some View {
-        if let description {
-            Button(action: {
-                HapticService.shared.tap()
-                if speechService.isSpeaking {
-                    SpeechService.shared.stop()
-                } else {
-                    SpeechService.shared.speak(description)
-                }
-            }) {
-                HStack(spacing: 6) {
-                    Image(systemName: speechService.isSpeaking ? "stop.circle.fill" : "play.circle.fill")
-                        .font(.title3)
-                    Text(speechService.isSpeaking ? "설명 정지" : "이미지 설명 듣기")
-                        .font(.subheadline)
-                }
-                .foregroundColor(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(Color.indigo.opacity(0.7))
-                .cornerRadius(20)
+        Button(action: toggleSpeech) {
+            Label(
+                isThisButtonSpeaking ? "설명 정지" : "이미지 설명 듣기",
+                systemImage: isThisButtonSpeaking ? "stop.circle.fill" : "play.circle.fill"
+            )
+            .font(.subheadline)
+            .foregroundColor(.white.opacity(0.9))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Color.indigo.opacity(0.6))
+            .cornerRadius(8)
+        }
+        .accessibilityLabel(isThisButtonSpeaking ? "이미지 설명 정지" : "이미지 설명 듣기")
+        .accessibilityHint(isThisButtonSpeaking ? "탭하여 설명 정지" : "탭하여 카드 이미지 설명을 들으세요")
+    }
+
+    private func toggleSpeech() {
+        if isThisButtonSpeaking {
+            SpeechService.shared.stop()
+            isThisButtonSpeaking = false
+        } else {
+            let text = TarotImageDescriptionService.shared.description(for: cardId)
+            isThisButtonSpeaking = true
+            HapticService.shared.impact(.light)
+            SpeechService.shared.speak(text) {
+                isThisButtonSpeaking = false
             }
-            .accessibilityLabel("카드 이미지 설명 듣기")
-            .accessibilityHint("탭하면 카드 이미지를 음성으로 설명합니다")
         }
     }
 }

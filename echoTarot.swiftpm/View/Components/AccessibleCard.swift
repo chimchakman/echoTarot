@@ -5,16 +5,14 @@ struct AccessibleCard: View {
     let isReversed: Bool
     let position: String?
     let showMeaning: Bool
-    let showImageDescriptionButton: Bool
 
     @ObservedObject private var settingsManager = SettingsManager.shared
 
-    init(card: TarotCard, isReversed: Bool = false, position: String? = nil, showMeaning: Bool = true, showImageDescriptionButton: Bool = false) {
+    init(card: TarotCard, isReversed: Bool = false, position: String? = nil, showMeaning: Bool = true) {
         self.card = card
         self.isReversed = isReversed
         self.position = position
         self.showMeaning = showMeaning
-        self.showImageDescriptionButton = showImageDescriptionButton
     }
 
     var body: some View {
@@ -51,18 +49,16 @@ struct AccessibleCard: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
                 }
-
-                if showImageDescriptionButton {
-                    CardImageDescriptionButton(card: card)
-                        .padding(.top, 4)
-                }
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(accessibilityDescription)
+
+            CardImageDescriptionButton(cardId: card.id)
+                .padding(.top, 4)
         }
         .padding()
         .background(Color.black.opacity(0.3))
         .cornerRadius(16)
-        .accessibilityElement(children: showImageDescriptionButton ? .contain : .combine)
-        .accessibilityLabel(accessibilityDescription)
     }
 
     private var accessibilityDescription: String {

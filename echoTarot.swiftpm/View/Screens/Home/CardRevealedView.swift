@@ -18,8 +18,7 @@ struct CardRevealedView: View {
                     AccessibleCard(
                         card: card,
                         isReversed: viewModel.cardReversals[index],
-                        position: viewModel.selectedSpread.positionNames[index],
-                        showImageDescriptionButton: true
+                        position: viewModel.selectedSpread.positionNames[index]
                     )
                     .tag(index)
                 }

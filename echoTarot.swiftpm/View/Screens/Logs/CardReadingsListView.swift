@@ -121,16 +121,16 @@ struct CardReadingsListView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundColor(.primary)
+                .accessibilityLabel("\(card.koreanName), \(card.suit.koreanName)")
 
             Text(card.suit.koreanName)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+                .accessibilityHidden(true)
 
-            CardImageDescriptionButton(card: card)
+            CardImageDescriptionButton(cardId: card.id)
         }
         .padding(.top, 16)
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("\(card.koreanName), \(card.suit.koreanName)")
     }
 
     // MARK: - Keywords Section
