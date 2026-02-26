@@ -30,7 +30,7 @@ struct ReadingDetailView: View {
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .automatic))
-                    .frame(height: 450)
+                    .frame(height: 400)
 
                     VStack(spacing: 16) {
                         if let questionPath = reading.questionAudioPath {

@@ -34,8 +34,14 @@ struct AppNavigation: View {
             }
         }
         .fullScreenGestures(
-            onSwipeLeft: { navigationState.navigateRight() },
-            onSwipeRight: { navigationState.navigateLeft() },
+            onSwipeLeft: {
+                guard !navigationState.isReadingActive else { return }
+                navigationState.navigateRight()
+            },
+            onSwipeRight: {
+                guard !navigationState.isReadingActive else { return }
+                navigationState.navigateLeft()
+            },
             onPinchIn: { navigationState.openSettings() },
             onPinchOut: { navigationState.openTutorial() }
         )

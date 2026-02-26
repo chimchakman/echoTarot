@@ -30,6 +30,7 @@ final class NavigationState: ObservableObject {
     @Published var currentScreen: AppScreen = .home
     @Published var showSettings = false
     @Published var showTutorial = false
+    @Published var isReadingActive: Bool = false
 
     private init() {}
 

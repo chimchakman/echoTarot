@@ -27,7 +27,7 @@ struct ReadingCompleteView: View {
             Button(action: {
                 viewModel.reset()
             }) {
-                Text("새로운 리딩 시작")
+                Text("홈으로 돌아가기")
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
@@ -38,7 +38,7 @@ struct ReadingCompleteView: View {
             }
             .padding(.horizontal)
             .padding(.bottom, 100)
-            .accessibilityLabel("새로운 리딩 시작")
+            .accessibilityLabel("홈으로 돌아가기")
             .accessibilityHint("탭하여 처음으로 돌아가기")
         }
         .padding()

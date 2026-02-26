@@ -13,7 +13,9 @@ enum HomeState: Equatable {
 
 @MainActor
 final class HomeViewModel: ObservableObject {
-    @Published var state: HomeState = .idle
+    @Published var state: HomeState = .idle {
+        didSet { NavigationState.shared.isReadingActive = (state != .idle) }
+    }
     @Published var selectedSpread: TarotSpread = SettingsManager.shared.defaultSpread
     @Published var drawnCards: [TarotCard] = []
     @Published var cardReversals: [Bool] = []
