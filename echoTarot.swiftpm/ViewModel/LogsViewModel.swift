@@ -4,7 +4,6 @@ import SwiftUI
 enum LogsSortOption: String, CaseIterable {
     case dateDescending = "최신순"
     case dateAscending = "오래된순"
-    case cardGroup = "카드별"
 }
 
 @MainActor
@@ -52,8 +51,6 @@ final class LogsViewModel: ObservableObject {
             result.sort { $0.date > $1.date }
         case .dateAscending:
             result.sort { $0.date < $1.date }
-        case .cardGroup:
-            result.sort { $0.cardIds.first ?? "" < $1.cardIds.first ?? "" }
         }
 
         filteredReadings = result
@@ -120,8 +117,9 @@ final class LogsViewModel: ObservableObject {
     }
 
     func getAllHashtags() -> [String] {
-        let allTags = readings.flatMap { $0.hashtags }
-        return Array(Set(allTags)).sorted()
+        let readingTags = readings.flatMap { $0.hashtags }
+        let masterTags = HashtagManager.shared.hashtags
+        return Array(Set(readingTags).union(masterTags)).sorted()
     }
 
     // MARK: - Card Dictionary Methods
@@ -142,8 +140,6 @@ final class LogsViewModel: ObservableObject {
             result.sort { $0.date > $1.date }
         case .dateAscending:
             result.sort { $0.date < $1.date }
-        case .cardGroup:
-            result.sort { $0.cardIds.first ?? "" < $1.cardIds.first ?? "" }
         }
 
         return result

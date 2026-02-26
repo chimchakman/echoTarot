@@ -18,6 +18,7 @@ struct HashtagInputView: View {
 
             Text("이전에 사용한 태그를 선택하거나 새로 추가하세요")
                 .font(.body)
+                .fontWeight(.medium)
                 .foregroundColor(.white.opacity(0.8))
                 .accessibilityLabel("이전 태그 선택 또는 새 태그 추가 가능")
 
@@ -51,7 +52,7 @@ struct HashtagInputView: View {
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.white.opacity(0.2))
+                        .background(Color.white.opacity(0.3))
                         .cornerRadius(12)
                     }
                     .accessibilityLabel("새 태그 추가 버튼")
@@ -142,7 +143,7 @@ struct HashtagInputView: View {
             }
             .padding()
             .frame(maxWidth: .infinity)
-            .background(isSelected ? Color.blue.opacity(0.4) : Color.white.opacity(0.2))
+            .background(isSelected ? Color.blue.opacity(0.4) : Color.white.opacity(0.3))
             .cornerRadius(12)
         }
         .accessibilityLabel("태그 \(hashtag)")
@@ -172,6 +173,9 @@ struct HashtagInputView: View {
             return
         }
 
+        // Persist to master list
+        HashtagManager.shared.add(trimmed)
+
         // Add to existing and select it
         existingHashtags.insert(trimmed, at: 0)
         selectedHashtags.insert(trimmed)
@@ -185,17 +189,17 @@ struct HashtagInputView: View {
     }
 
     private func loadExistingHashtags() {
-        do {
-            let readings = try PersistenceManager.shared.fetchAllReadings()
-            var uniqueTags = Set<String>()
+        // Load master list from HashtagManager
+        var tags = Set(HashtagManager.shared.hashtags)
 
-            for reading in readings {
-                uniqueTags.formUnion(reading.hashtags)
-            }
-
-            existingHashtags = Array(uniqueTags).sorted()
-        } catch {
-            existingHashtags = []
+        // Merge tags from readings for backward compatibility
+        if let readings = try? PersistenceManager.shared.fetchAllReadings() {
+            let readingTags = readings.flatMap { $0.hashtags }
+            tags.formUnion(readingTags)
+            // Persist any new tags found in readings back to master list
+            HashtagManager.shared.mergeFromReadings(readingTags)
         }
+
+        existingHashtags = Array(tags).sorted()
     }
 }

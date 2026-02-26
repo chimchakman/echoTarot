@@ -2,7 +2,9 @@ import SwiftUI
 
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
+    @ObservedObject private var hashtagManager = HashtagManager.shared
     @State private var showResetAlert = false
+    @State private var showHashtagSheet = false
 
     var body: some View {
         ScrollView {
@@ -24,6 +26,27 @@ struct SettingsView: View {
 
                 settingsSection(title: "기본 스프레드") {
                     SpreadSettingsView(viewModel: viewModel)
+                }
+
+                settingsSection(title: "해시태그 관리") {
+                    Button(action: { showHashtagSheet = true }) {
+                        HStack {
+                            Label("해시태그 관리", systemImage: "tag")
+                            Spacer()
+                            Text("\(hashtagManager.hashtags.count)개")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.6))
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.white.opacity(0.4))
+                        }
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.5))
+                        .cornerRadius(12)
+                    }
+                    .accessibilityLabel("해시태그 관리, \(hashtagManager.hashtags.count)개")
+                    .accessibilityHint("탭하여 해시태그 목록을 관리합니다")
                 }
 
                 settingsSection(title: "피드백") {
@@ -86,6 +109,9 @@ struct SettingsView: View {
                 .padding(.bottom, 100)
             }
             .padding(.vertical)
+        }
+        .sheet(isPresented: $showHashtagSheet) {
+            HashtagSettingsView()
         }
         .alert("설정 초기화", isPresented: $showResetAlert) {
             Button("취소", role: .cancel) {}

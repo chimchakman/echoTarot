@@ -153,6 +153,56 @@ final class PersistenceManager {
         }
     }
     
+    // MARK: - Hashtag Batch Operations
+
+    func renameHashtag(from oldName: String, to newName: String) throws {
+        if #available(iOS 17.0, *) {
+            guard let context = context else {
+                throw PersistenceError.contextUnavailable
+            }
+            let descriptor = FetchDescriptor<TarotReading>()
+            let all = try context.fetch(descriptor)
+            for reading in all where reading.hashtags.contains(oldName) {
+                reading.hashtags = reading.hashtags.map { $0 == oldName ? newName : $0 }
+            }
+            try context.save()
+        } else {
+            var readings = fetchLegacyReadings()
+            readings = readings.map { reading in
+                var r = reading
+                r.hashtags = r.hashtags.map { $0 == oldName ? newName : $0 }
+                return r
+            }
+            if let encoded = try? JSONEncoder().encode(readings) {
+                UserDefaults.standard.set(encoded, forKey: legacyReadingsKey)
+            }
+        }
+    }
+
+    func deleteHashtag(_ hashtag: String) throws {
+        if #available(iOS 17.0, *) {
+            guard let context = context else {
+                throw PersistenceError.contextUnavailable
+            }
+            let descriptor = FetchDescriptor<TarotReading>()
+            let all = try context.fetch(descriptor)
+            for reading in all where reading.hashtags.contains(hashtag) {
+                reading.hashtags = reading.hashtags.filter { $0 != hashtag }
+            }
+            try context.save()
+        } else {
+            var readings = fetchLegacyReadings()
+            readings = readings.map { reading in
+                var r = reading
+                r.hashtags = r.hashtags.filter { $0 != hashtag }
+                return r
+            }
+            if let encoded = try? JSONEncoder().encode(readings) {
+                UserDefaults.standard.set(encoded, forKey: legacyReadingsKey)
+            }
+        }
+    }
+
     // MARK: - Legacy Storage (iOS 16)
     
     private func saveLegacyReading(_ reading: TarotReadingLegacy) {
