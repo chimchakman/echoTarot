@@ -87,7 +87,8 @@ final class HomeViewModel: ObservableObject {
         for (index, card) in drawnCards.enumerated() {
             let isReversed = cardReversals[index]
             let meaning = SettingsManager.shared.effectiveMeaning(for: card, isReversed: isReversed)
-            speechTexts.append("\(index + 1)번째 카드: \(card.koreanName). \(meaning)")
+            let directionText = isReversed ? "역방향" : "정방향"
+            speechTexts.append("\(index + 1)번째 카드: \(card.koreanName), \(directionText). \(meaning)")
         }
 
         SpeechService.shared.speakWithPause(speechTexts, pauseDuration: 1.0)

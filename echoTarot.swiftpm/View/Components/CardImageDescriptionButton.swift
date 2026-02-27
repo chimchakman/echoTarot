@@ -20,6 +20,16 @@ struct CardImageDescriptionButton: View {
         }
         .accessibilityLabel(isThisButtonSpeaking ? "이미지 설명 정지" : "이미지 설명 듣기")
         .accessibilityHint(isThisButtonSpeaking ? "탭하여 설명 정지" : "탭하여 카드 이미지 설명을 들으세요")
+        .onChange(of: speechService.isSpeaking) { isSpeaking in
+            if !isSpeaking {
+                isThisButtonSpeaking = false
+            }
+        }
+        .onDisappear {
+            if isThisButtonSpeaking {
+                SpeechService.shared.stop()
+            }
+        }
     }
 
     private func toggleSpeech() {
