@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 struct VoiceRecordButton: View {
     @ObservedObject var audioManager = AudioFileManager.shared
@@ -56,8 +57,64 @@ struct VoiceRecordButton: View {
     }
 
     private func startRecording() {
+        #if os(iOS)
+        if #available(iOS 17.0, *) {
+            let currentPermission = AVAudioApplication.shared.recordPermission
+            switch currentPermission {
+            case .granted:
+                beginRecording()
+            case .undetermined:
+                Task {
+                    let granted = await AVAudioApplication.requestRecordPermission()
+                    await MainActor.run {
+                        if granted {
+                            self.beginRecording()
+                        } else {
+                            HapticService.shared.error()
+                            SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                        }
+                    }
+                }
+            case .denied:
+                HapticService.shared.error()
+                SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+            @unknown default:
+                HapticService.shared.error()
+                SpeechService.shared.speak("Unable to access microphone.")
+            }
+        } else {
+            let session = AVAudioSession.sharedInstance()
+            let currentPermission = session.recordPermission
+            switch currentPermission {
+            case .granted:
+                beginRecording()
+            case .undetermined:
+                session.requestRecordPermission { granted in
+                    DispatchQueue.main.async {
+                        if granted {
+                            self.beginRecording()
+                        } else {
+                            HapticService.shared.error()
+                            SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                        }
+                    }
+                }
+            case .denied:
+                HapticService.shared.error()
+                SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+            @unknown default:
+                HapticService.shared.error()
+                SpeechService.shared.speak("Unable to access microphone.")
+            }
+        }
+        #endif
+    }
+
+    private func beginRecording() {
+        #if os(iOS)
         HapticService.shared.recordingStarted()
         SpeechService.shared.speak("Starting recording")
+        #endif
 
         let url = audioManager.generateFilePath(for: recordingType)
         recordingURL = url
@@ -66,16 +123,22 @@ struct VoiceRecordButton: View {
             try audioManager.startRecording(to: url)
             isRecording = true
         } catch {
+            #if os(iOS)
             HapticService.shared.error()
             SpeechService.shared.speak("Unable to start recording")
+            #endif
         }
     }
 
     private func stopRecording() {
+        #if os(iOS)
         HapticService.shared.recordingStopped()
+        #endif
 
         if let url = audioManager.stopRecording() {
+            #if os(iOS)
             SpeechService.shared.speak("Recording complete")
+            #endif
             isRecording = false
             onRecordingComplete(url)
         }

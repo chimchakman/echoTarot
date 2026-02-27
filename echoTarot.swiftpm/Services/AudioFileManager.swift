@@ -31,17 +31,14 @@ final class AudioFileManager: NSObject, ObservableObject {
 
     override private init() {
         super.init()
-        Task { @MainActor in
-            setupAudioSession()
-        }
+        setupAudioSession()
     }
 
-    nonisolated private func setupAudioSession() {
+    private func setupAudioSession() {
         #if os(iOS)
         let session = AVAudioSession.sharedInstance()
         do {
             try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
-            try session.setActive(true)
         } catch {
             print("Failed to setup audio session: \(error)")
         }
@@ -54,6 +51,21 @@ final class AudioFileManager: NSObject, ObservableObject {
     }
 
     func startRecording(to url: URL) throws {
+        #if os(iOS)
+        if #available(iOS 17.0, *) {
+            guard AVAudioApplication.shared.recordPermission == .granted else {
+                throw RecordingError.permissionDenied
+            }
+        } else {
+            guard AVAudioSession.sharedInstance().recordPermission == .granted else {
+                throw RecordingError.permissionDenied
+            }
+        }
+
+        // Activate audio session now that permission is granted
+        try AVAudioSession.sharedInstance().setActive(true, options: [])
+        #endif
+
         let settings: [String: Any] = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 44100,
@@ -83,10 +95,17 @@ final class AudioFileManager: NSObject, ObservableObject {
         audioRecorder = nil
         isRecording = false
 
+        #if os(iOS)
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        #endif
+
         return url
     }
 
     func playAudio(from url: URL) throws {
+        #if os(iOS)
+        try AVAudioSession.sharedInstance().setActive(true, options: [])
+        #endif
         audioPlayer = try AVAudioPlayer(contentsOf: url)
         audioPlayer?.delegate = self
         audioPlayer?.play()
@@ -97,6 +116,9 @@ final class AudioFileManager: NSObject, ObservableObject {
         audioPlayer?.stop()
         audioPlayer = nil
         isPlaying = false
+        #if os(iOS)
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        #endif
     }
 
     func deleteRecording(at path: String) {
@@ -121,4 +143,15 @@ extension AudioFileManager: AVAudioPlayerDelegate {
 enum RecordingType: String {
     case question = "question"
     case reading = "reading"
+}
+
+enum RecordingError: LocalizedError {
+    case permissionDenied
+
+    var errorDescription: String? {
+        switch self {
+        case .permissionDenied:
+            return "Microphone access is required to record. Please enable it in Settings."
+        }
+    }
 }

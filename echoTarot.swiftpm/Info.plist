@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>echoTarot records your question and tarot reading interpretation using the microphone.</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>echoTarot uses speech recognition to transcribe your spoken questions.</string>
+</dict>
+</plist>

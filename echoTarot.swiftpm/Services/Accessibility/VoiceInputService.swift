@@ -92,6 +92,9 @@ final class VoiceInputService: ObservableObject {
         recognitionTask = nil
 
         isListening = false
+        #if os(iOS)
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        #endif
     }
 }
 
