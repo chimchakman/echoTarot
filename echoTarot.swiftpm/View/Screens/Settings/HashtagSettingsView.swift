@@ -13,14 +13,14 @@ struct HashtagSettingsView: View {
             ScrollView {
                 VStack(spacing: 12) {
                     if hashtagManager.hashtags.isEmpty {
-                        Text("저장된 태그가 없습니다")
+                        Text("No saved tags")
                             .font(.body)
                             .foregroundColor(.white.opacity(0.5))
                             .padding()
                             .frame(maxWidth: .infinity)
                             .background(Color.black.opacity(0.3))
                             .cornerRadius(12)
-                            .accessibilityLabel("저장된 태그가 없습니다")
+                            .accessibilityLabel("No saved tags")
                     } else {
                         ForEach(hashtagManager.hashtags, id: \.self) { hashtag in
                             hashtagRow(hashtag)
@@ -29,27 +29,27 @@ struct HashtagSettingsView: View {
                 }
                 .padding()
             }
-            .navigationTitle("해시태그 관리")
+            .navigationTitle("Manage Hashtags")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("완료") {
+                    Button("Done") {
                         dismiss()
                     }
-                    .accessibilityLabel("해시태그 관리 닫기")
+                    .accessibilityLabel("Close hashtag management")
                 }
             }
         }
         .sheet(isPresented: $showingRenameSheet) {
             renameSheet
         }
-        .alert("태그 삭제", isPresented: $showingDeleteAlert) {
-            Button("취소", role: .cancel) {}
-            Button("삭제", role: .destructive) {
+        .alert("Delete Tag", isPresented: $showingDeleteAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
                 performDelete(selectedHashtag)
             }
         } message: {
-            Text("'\(selectedHashtag)' 태그를 삭제하시겠습니까? 모든 기록에서 제거됩니다.")
+            Text("Delete the '\(selectedHashtag)' tag? It will be removed from all readings.")
         }
     }
 
@@ -71,8 +71,8 @@ struct HashtagSettingsView: View {
                     .foregroundColor(.indigo)
                     .font(.title2)
             }
-            .accessibilityLabel("\(hashtag) 이름 변경")
-            .accessibilityHint("탭하여 태그 이름을 변경합니다")
+            .accessibilityLabel("Rename \(hashtag)")
+            .accessibilityHint("Tap to rename this tag")
 
             Button(action: {
                 selectedHashtag = hashtag
@@ -83,48 +83,48 @@ struct HashtagSettingsView: View {
                     .foregroundColor(.red.opacity(0.8))
                     .font(.title2)
             }
-            .accessibilityLabel("\(hashtag) 삭제")
-            .accessibilityHint("탭하여 태그를 삭제합니다")
+            .accessibilityLabel("Delete \(hashtag)")
+            .accessibilityHint("Tap to delete this tag")
         }
         .padding()
         .background(Color.black.opacity(0.5))
         .cornerRadius(12)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("태그 \(hashtag)")
+        .accessibilityLabel("Tag: \(hashtag)")
     }
 
     private var renameSheet: some View {
         NavigationStack {
             VStack(spacing: 24) {
-                Text("'\(selectedHashtag)' 태그 이름 변경")
+                Text("Rename '\(selectedHashtag)'")
                     .font(.headline)
                     .foregroundColor(.primary)
-                    .accessibilityLabel("태그 이름 변경 화면")
+                    .accessibilityLabel("Rename tag screen")
 
-                TextField("새 태그 이름", text: $renameText)
+                TextField("New tag name", text: $renameText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .accessibilityLabel("새 태그 이름 입력 필드")
+                    .accessibilityLabel("New tag name input field")
 
                 Spacer()
             }
             .padding()
-            .navigationTitle("이름 변경")
+            .navigationTitle("Rename")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("취소") {
+                    Button("Cancel") {
                         showingRenameSheet = false
                     }
-                    .accessibilityLabel("이름 변경 취소")
+                    .accessibilityLabel("Cancel rename")
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("확인") {
+                    Button("Confirm") {
                         performRename(from: selectedHashtag, to: renameText)
                         showingRenameSheet = false
                     }
                     .disabled(renameText.trimmingCharacters(in: .whitespaces).isEmpty)
-                    .accessibilityLabel("이름 변경 확인")
-                    .accessibilityHint("탭하여 새 이름으로 변경합니다")
+                    .accessibilityLabel("Confirm rename")
+                    .accessibilityHint("Tap to apply the new name")
                 }
             }
         }
@@ -142,15 +142,15 @@ struct HashtagSettingsView: View {
         do {
             try PersistenceManager.shared.renameHashtag(from: oldName, to: trimmed)
             HapticService.shared.success()
-            SpeechService.shared.speak("\(trimmed)으로 변경되었습니다")
+            SpeechService.shared.speak("Renamed to \(trimmed)")
             if #available(iOS 17.0, *) {
-                AccessibilityNotification.Announcement("\(trimmed)으로 변경되었습니다").post()
+                AccessibilityNotification.Announcement("Renamed to \(trimmed)").post()
             }
         } catch {
             // Rollback master list on failure
             HashtagManager.shared.rename(from: trimmed, to: oldName)
             HapticService.shared.error()
-            SpeechService.shared.speak("이름 변경에 실패했습니다")
+            SpeechService.shared.speak("Failed to rename")
         }
     }
 
@@ -162,15 +162,15 @@ struct HashtagSettingsView: View {
         do {
             try PersistenceManager.shared.deleteHashtag(hashtag)
             HapticService.shared.success()
-            SpeechService.shared.speak("태그가 삭제되었습니다")
+            SpeechService.shared.speak("Tag deleted")
             if #available(iOS 17.0, *) {
-                AccessibilityNotification.Announcement("태그가 삭제되었습니다").post()
+                AccessibilityNotification.Announcement("Tag deleted").post()
             }
         } catch {
             // Rollback master list on failure
             HashtagManager.shared.add(hashtag)
             HapticService.shared.error()
-            SpeechService.shared.speak("삭제에 실패했습니다")
+            SpeechService.shared.speak("Failed to delete")
         }
     }
 }

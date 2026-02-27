@@ -31,13 +31,13 @@ struct AccessibleCard: View {
                 .accessibilityHidden(true)
 
             VStack(spacing: 8) {
-                Text(card.koreanName)
+                Text(card.name)
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
 
                 if isReversed {
-                    Text("역방향")
+                    Text("Reversed")
                         .font(.subheadline)
                         .foregroundColor(.orange)
                 }
@@ -62,12 +62,12 @@ struct AccessibleCard: View {
     }
 
     private var accessibilityDescription: String {
-        var description = card.koreanName
+        var description = card.name
         if let position = position {
             description = "\(position), \(description)"
         }
         if isReversed {
-            description += ", 역방향"
+            description += ", Reversed"
         }
         if showMeaning {
             description += ". \(settingsManager.effectiveMeaning(for: card, isReversed: isReversed))"

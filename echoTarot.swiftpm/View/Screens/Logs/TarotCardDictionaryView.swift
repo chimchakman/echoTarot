@@ -20,7 +20,7 @@ struct TarotCardDictionaryView: View {
             CardReadingsListView(card: card, viewModel: viewModel)
         }
         .onAppear {
-            SpeechService.shared.speak("타로 카드 사전")
+            SpeechService.shared.speak("Tarot Card Dictionary")
             HapticService.shared.tap()
         }
     }
@@ -40,13 +40,13 @@ struct TarotCardDictionaryView: View {
             .padding(.top, 8)
         } label: {
             HStack {
-                Text(suit.koreanName)
+                Text(suit.name)
                     .font(.headline)
                     .foregroundColor(.white)
 
                 Spacer()
 
-                Text("\(cards.count)장")
+                Text("\(cards.count) cards")
                     .font(.subheadline)
                     .foregroundColor(.white.opacity(0.6))
             }
@@ -56,13 +56,13 @@ struct TarotCardDictionaryView: View {
         .background(Color.black.opacity(0.5))
         .cornerRadius(12)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(suit.koreanName), \(cards.count)장의 카드")
+        .accessibilityLabel("\(suit.name), \(cards.count) cards")
     }
 
     private func cardButton(card: TarotCard) -> some View {
         Button(action: {
             HapticService.shared.tap()
-            SpeechService.shared.speak(card.koreanName)
+            SpeechService.shared.speak(card.name)
             selectedCard = card
         }) {
             VStack(spacing: 4) {
@@ -74,15 +74,15 @@ struct TarotCardDictionaryView: View {
                     .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
                     .accessibilityHidden(true)
 
-                Text(card.koreanName)
+                Text(card.name)
                     .font(.caption2)
                     .foregroundColor(.white.opacity(0.8))
                     .lineLimit(2)
                     .multilineTextAlignment(.center)
             }
         }
-        .accessibilityLabel(card.koreanName)
+        .accessibilityLabel(card.name)
         .accessibilityAddTraits(.isButton)
-        .accessibilityHint("두 번 탭하여 \(card.koreanName) 카드가 포함된 리딩 기록 보기")
+        .accessibilityHint("Double-tap to view readings containing \(card.name)")
     }
 }

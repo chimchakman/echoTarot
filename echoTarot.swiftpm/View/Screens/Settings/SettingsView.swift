@@ -9,31 +9,31 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                Text("설정")
+                Text("Settings")
                     .font(.title)
                     .fontWeight(.heavy)
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
 
-                settingsSection(title: "음성") {
+                settingsSection(title: "Voice") {
                     VolumeSettingView(viewModel: viewModel)
                 }
 
-                settingsSection(title: "튜토리얼") {
+                settingsSection(title: "Tutorial") {
                     TutorialSettingsView(viewModel: viewModel)
                 }
 
-                settingsSection(title: "기본 스프레드") {
+                settingsSection(title: "Default Spread") {
                     SpreadSettingsView(viewModel: viewModel)
                 }
 
-                settingsSection(title: "해시태그 관리") {
+                settingsSection(title: "Hashtag Management") {
                     Button(action: { showHashtagSheet = true }) {
                         HStack {
-                            Label("해시태그 관리", systemImage: "tag")
+                            Label("Manage Hashtags", systemImage: "tag")
                             Spacer()
-                            Text("\(hashtagManager.hashtags.count)개")
+                            Text("\(hashtagManager.hashtags.count)")
                                 .font(.caption)
                                 .foregroundColor(.white.opacity(0.6))
                             Image(systemName: "chevron.right")
@@ -45,33 +45,33 @@ struct SettingsView: View {
                         .background(Color.black.opacity(0.5))
                         .cornerRadius(12)
                     }
-                    .accessibilityLabel("해시태그 관리, \(hashtagManager.hashtags.count)개")
-                    .accessibilityHint("탭하여 해시태그 목록을 관리합니다")
+                    .accessibilityLabel("Manage hashtags, \(hashtagManager.hashtags.count) items")
+                    .accessibilityHint("Tap to manage your hashtag list")
                 }
 
-                settingsSection(title: "피드백") {
+                settingsSection(title: "Feedback") {
                     Toggle(isOn: Binding(
                         get: { viewModel.hapticEnabled },
                         set: { _ in viewModel.toggleHaptic() }
                     )) {
-                        Label("햅틱 피드백", systemImage: "hand.tap")
+                        Label("Haptic Feedback", systemImage: "hand.tap")
                     }
                     .tint(.indigo)
                     .padding()
                     .background(Color.black.opacity(0.5))
                     .foregroundColor(.white)
                     .cornerRadius(12)
-                    .accessibilityLabel("햅틱 피드백")
-                    .accessibilityValue(viewModel.hapticEnabled ? "켜짐" : "꺼짐")
+                    .accessibilityLabel("Haptic feedback")
+                    .accessibilityValue(viewModel.hapticEnabled ? "on" : "off")
                 }
 
-                settingsSection(title: "초기화") {
+                settingsSection(title: "Reset") {
                     VStack(spacing: 12) {
                         Button(action: {
                             viewModel.resetTutorials()
                         }) {
                             HStack {
-                                Label("튜토리얼 초기화", systemImage: "arrow.counterclockwise")
+                                Label("Reset Tutorials", systemImage: "arrow.counterclockwise")
                                 Spacer()
                             }
                             .foregroundColor(.white)
@@ -79,13 +79,13 @@ struct SettingsView: View {
                             .background(Color.black.opacity(0.5))
                             .cornerRadius(12)
                         }
-                        .accessibilityHint("튜토리얼을 다시 볼 수 있습니다")
+                        .accessibilityHint("Allows you to view tutorials again")
 
                         Button(action: {
                             showResetAlert = true
                         }) {
                             HStack {
-                                Label("모든 설정 초기화", systemImage: "trash")
+                                Label("Reset All Settings", systemImage: "trash")
                                 Spacer()
                             }
                             .foregroundColor(.white)
@@ -93,15 +93,15 @@ struct SettingsView: View {
                             .background(Color.red.opacity(0.5))
                             .cornerRadius(12)
                         }
-                        .accessibilityHint("모든 설정을 기본값으로 되돌립니다")
+                        .accessibilityHint("Restores all settings to their defaults")
                     }
                 }
 
                 VStack(spacing: 8) {
-                    Text("에코 타로")
+                    Text("Echo Tarot")
                         .font(.headline)
                         .foregroundColor(.white.opacity(0.6))
-                    Text("버전 1.0")
+                    Text("Version 1.0")
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.4))
                 }
@@ -113,13 +113,13 @@ struct SettingsView: View {
         .sheet(isPresented: $showHashtagSheet) {
             HashtagSettingsView()
         }
-        .alert("설정 초기화", isPresented: $showResetAlert) {
-            Button("취소", role: .cancel) {}
-            Button("초기화", role: .destructive) {
+        .alert("Reset Settings", isPresented: $showResetAlert) {
+            Button("Cancel", role: .cancel) {}
+            Button("Reset", role: .destructive) {
                 viewModel.resetAllSettings()
             }
         } message: {
-            Text("모든 설정을 기본값으로 되돌리시겠습니까?")
+            Text("Restore all settings to their default values?")
         }
     }
 

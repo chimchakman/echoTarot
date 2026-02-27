@@ -7,7 +7,7 @@ struct CardRevealedView: View {
     var body: some View {
         VStack(spacing: 16) {
             // Header
-            Text("뽑힌 카드")
+            Text("Cards Drawn")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
@@ -42,7 +42,7 @@ struct CardRevealedView: View {
             Button(action: {
                 viewModel.startReadingRecording()
             }) {
-                Text("리딩 녹음하기")
+                Text("Record Reading")
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
@@ -52,18 +52,18 @@ struct CardRevealedView: View {
                     .cornerRadius(12)
             }
             .padding(.horizontal)
-            .accessibilityLabel("리딩 녹음하기")
-            .accessibilityHint("탭하여 리딩 녹음 시작")
+            .accessibilityLabel("Record reading")
+            .accessibilityHint("Tap to start recording your reading")
 
             Button(action: {
                 viewModel.skipReadingRecording()
             }) {
-                Text("녹음 없이 저장")
+                Text("Save without recording")
                     .font(.body)
                     .foregroundColor(.white.opacity(0.6))
             }
             .padding(.bottom, 100)
-            .accessibilityLabel("녹음 없이 저장하기")
+            .accessibilityLabel("Save without recording")
         }
         .padding()
     }

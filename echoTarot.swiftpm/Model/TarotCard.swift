@@ -7,13 +7,13 @@ enum TarotSuit: String, Codable, CaseIterable, Sendable {
     case swords = "Swords"
     case wands = "Wands"
 
-    var koreanName: String {
+    var name: String {
         switch self {
-        case .major: return "메이저 아르카나"
-        case .cups: return "컵"
-        case .pentacles: return "펜타클"
-        case .swords: return "소드"
-        case .wands: return "완드"
+        case .major: return "Major Arcana"
+        case .cups: return "Cups"
+        case .pentacles: return "Pentacles"
+        case .swords: return "Swords"
+        case .wands: return "Wands"
         }
     }
 }
@@ -21,7 +21,6 @@ enum TarotSuit: String, Codable, CaseIterable, Sendable {
 struct TarotCard: Identifiable, Codable, Hashable, Sendable {
     let id: String
     let name: String
-    let koreanName: String
     let suit: TarotSuit
     let number: Int
     let uprightMeaning: String
@@ -29,6 +28,6 @@ struct TarotCard: Identifiable, Codable, Hashable, Sendable {
     let imageName: String
 
     var description: String {
-        "\(koreanName) - \(uprightMeaning)"
+        "\(name) - \(uprightMeaning)"
     }
 }

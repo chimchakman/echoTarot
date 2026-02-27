@@ -256,7 +256,7 @@ enum PersistenceError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .contextUnavailable:
-            return "데이터 저장소에 접근할 수 없습니다"
+            return "Unable to access the data store."
         }
     }
 }

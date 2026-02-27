@@ -14,6 +14,6 @@ struct PageIndicator: View {
         }
         .padding(.vertical, 16)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(totalPages)개 중 \(currentPage + 1)번째 페이지")
+        .accessibilityLabel("Page \(currentPage + 1) of \(totalPages)")
     }
 }

@@ -28,14 +28,14 @@ final class HomeViewModel: ObservableObject {
 
     func startReading() {
         HapticService.shared.tap()
-        SpeechService.shared.speak("질문을 녹음해주세요. 탭하여 녹음을 시작하세요.")
+        SpeechService.shared.speak("Please record your question. Tap to start recording.")
         state = .questionRecording
     }
 
     func completeQuestionRecording(audioURL: URL) {
         questionAudioURL = audioURL
         HapticService.shared.success()
-        SpeechService.shared.speak("질문이 녹음되었습니다. 태그를 선택하세요.")
+        SpeechService.shared.speak("Question recorded. Please select tags.")
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             self?.state = .hashtagInput
@@ -64,8 +64,8 @@ final class HomeViewModel: ObservableObject {
                 self.cardReversals.append(isReversed)
 
                 // Speak card info
-                let reversedText = isReversed ? "역방향" : ""
-                SpeechService.shared.speak("\(i + 1)번째 카드, \(card.koreanName) \(reversedText)")
+                let reversedText = isReversed ? "Reversed" : ""
+                SpeechService.shared.speak("Card \(i + 1): \(card.name) \(reversedText)")
 
                 // Check if all cards are drawn
                 if self.drawnCards.count == self.selectedSpread.cardCount {
@@ -87,8 +87,8 @@ final class HomeViewModel: ObservableObject {
         for (index, card) in drawnCards.enumerated() {
             let isReversed = cardReversals[index]
             let meaning = SettingsManager.shared.effectiveMeaning(for: card, isReversed: isReversed)
-            let directionText = isReversed ? "역방향" : "정방향"
-            speechTexts.append("\(index + 1)번째 카드: \(card.koreanName), \(directionText). \(meaning)")
+            let directionText = isReversed ? "Reversed" : "Upright"
+            speechTexts.append("Card \(index + 1): \(card.name), \(directionText). \(meaning)")
         }
 
         SpeechService.shared.speakWithPause(speechTexts, pauseDuration: 1.0)
@@ -97,7 +97,7 @@ final class HomeViewModel: ObservableObject {
     func startReadingRecording() {
         SpeechService.shared.stop()
         HapticService.shared.tap()
-        SpeechService.shared.speak("리딩을 녹음해주세요. 탭하여 녹음을 시작하세요.")
+        SpeechService.shared.speak("Please record your reading. Tap to start recording.")
         state = .readingRecording
     }
 
@@ -109,7 +109,7 @@ final class HomeViewModel: ObservableObject {
     func completeHashtagInput(selectedHashtags: [String]) {
         hashtags = selectedHashtags
         HapticService.shared.success()
-        SpeechService.shared.speak("태그가 선택되었습니다. 카드를 뽑겠습니다.")
+        SpeechService.shared.speak("Tags selected. Drawing cards now.")
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             self?.drawCards()
@@ -119,7 +119,7 @@ final class HomeViewModel: ObservableObject {
     func skipHashtagInput() {
         hashtags = []
         HapticService.shared.tap()
-        SpeechService.shared.speak("태그 선택을 건너뜁니다. 카드를 뽑겠습니다.")
+        SpeechService.shared.speak("Skipping tag selection. Drawing cards now.")
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             self?.drawCards()
@@ -137,11 +137,11 @@ final class HomeViewModel: ObservableObject {
                 hashtags: hashtags
             )
             HapticService.shared.success()
-            SpeechService.shared.speak("리딩이 저장되었습니다.")
+            SpeechService.shared.speak("Reading saved.")
             state = .complete
         } catch {
             HapticService.shared.error()
-            SpeechService.shared.speak("저장에 실패했습니다. 다시 시도해주세요.")
+            SpeechService.shared.speak("Failed to save. Please try again.")
         }
     }
 
@@ -170,6 +170,6 @@ final class HomeViewModel: ObservableObject {
     func changeSpread() {
         selectedSpread = selectedSpread == .oneCard ? .threeCard : .oneCard
         HapticService.shared.selection()
-        SpeechService.shared.speak("\(selectedSpread.koreanName) 선택됨")
+        SpeechService.shared.speak("\(selectedSpread.name) selected")
     }
 }

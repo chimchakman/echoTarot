@@ -38,7 +38,7 @@ struct TutorialOverlay: View {
                     }
 
                     // Navigation hint
-                    Text("탭하여 다음으로")
+                    Text("Tap to continue")
                         .font(.subheadline)
                         .foregroundColor(.white.opacity(0.6))
                 }
@@ -51,8 +51,8 @@ struct TutorialOverlay: View {
                 speakCurrentScript()
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("튜토리얼: \(scripts[currentIndex])")
-            .accessibilityHint("탭하여 다음 단계로 이동")
+            .accessibilityLabel("Tutorial: \(scripts[currentIndex])")
+            .accessibilityHint("Tap to move to the next step")
         }
     }
 

@@ -23,7 +23,7 @@ final class SpeechService: NSObject, ObservableObject {
         isSpeaking = false
 
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: "ko-KR")
+        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = SettingsManager.shared.speechRate
         utterance.volume = SettingsManager.shared.speechVolume
         utterance.pitchMultiplier = 1.0

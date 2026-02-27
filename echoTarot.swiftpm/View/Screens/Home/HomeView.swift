@@ -27,15 +27,15 @@ struct HomeView: View {
             if viewModel.state != .idle && viewModel.state != .complete {
                 VStack {
                     HStack {
-                        Button("취소") {
+                        Button("Cancel") {
                             showingCancelAlert = true
                         }
                         .font(.body)
                         .foregroundColor(.white)
                         .padding(.horizontal, 25)
                         .padding(.top, 10)
-                        .accessibilityLabel("리딩 취소")
-                        .accessibilityHint("리딩을 취소하고 처음으로 돌아갑니다")
+                        .accessibilityLabel("Cancel reading")
+                        .accessibilityHint("Cancel the current reading and return to the start")
                         .accessibilitySortPriority(-1)
                         Spacer()
                     }
@@ -45,13 +45,13 @@ struct HomeView: View {
                 .allowsHitTesting(true)
             }
         }
-        .alert("리딩을 취소하시겠습니까?", isPresented: $showingCancelAlert) {
-            Button("계속하기", role: .cancel) {}
-            Button("취소", role: .destructive) {
+        .alert("Cancel this reading?", isPresented: $showingCancelAlert) {
+            Button("Continue", role: .cancel) {}
+            Button("Cancel reading", role: .destructive) {
                 viewModel.cancelReading()
             }
         } message: {
-            Text("현재 리딩이 저장되지 않고 처음으로 돌아갑니다.")
+            Text("The current reading will not be saved and you will return to the start.")
         }
         .onAppear {
             if settingsManager.shouldShowTutorial(for: "home") {

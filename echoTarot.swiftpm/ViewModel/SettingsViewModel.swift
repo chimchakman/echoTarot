@@ -22,21 +22,21 @@ final class SettingsViewModel: ObservableObject {
     func updateSpeechVolume(_ value: Float) {
         speechVolume = value
         settingsManager.speechVolume = value
-        SpeechService.shared.speak("음량 테스트")
+        SpeechService.shared.speak("Volume test")
     }
 
     func updateSpeechRate(_ value: Float) {
         speechRate = value
         settingsManager.speechRate = value
-        SpeechService.shared.speak("속도 테스트")
+        SpeechService.shared.speak("Speed test")
     }
 
     func toggleTutorial() {
         tutorialEnabled.toggle()
         settingsManager.tutorialEnabled = tutorialEnabled
         HapticService.shared.selection()
-        let status = tutorialEnabled ? "켜짐" : "꺼짐"
-        SpeechService.shared.speak("튜토리얼 \(status)")
+        let status = tutorialEnabled ? "on" : "off"
+        SpeechService.shared.speak("Tutorial \(status)")
     }
 
     func toggleHaptic() {
@@ -45,15 +45,15 @@ final class SettingsViewModel: ObservableObject {
         if hapticEnabled {
             HapticService.shared.success()
         }
-        let status = hapticEnabled ? "켜짐" : "꺼짐"
-        SpeechService.shared.speak("햅틱 피드백 \(status)")
+        let status = hapticEnabled ? "on" : "off"
+        SpeechService.shared.speak("Haptic feedback \(status)")
     }
 
     func setDefaultSpread(_ spread: TarotSpread) {
         defaultSpread = spread
         settingsManager.defaultSpread = spread
         HapticService.shared.selection()
-        SpeechService.shared.speak("기본 스프레드: \(spread.koreanName)")
+        SpeechService.shared.speak("Default spread: \(spread.name)")
     }
 
     func resetTutorials() {
@@ -61,7 +61,7 @@ final class SettingsViewModel: ObservableObject {
         settingsManager.settings.logsTutorialShown = false
         settingsManager.settings.settingsTutorialShown = false
         HapticService.shared.success()
-        SpeechService.shared.speak("튜토리얼이 초기화되었습니다")
+        SpeechService.shared.speak("Tutorials reset")
     }
 
     func resetAllSettings() {
@@ -74,6 +74,6 @@ final class SettingsViewModel: ObservableObject {
         defaultSpread = settingsManager.defaultSpread
 
         HapticService.shared.success()
-        SpeechService.shared.speak("모든 설정이 초기화되었습니다")
+        SpeechService.shared.speak("All settings reset")
     }
 }

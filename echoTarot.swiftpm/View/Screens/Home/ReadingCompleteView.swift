@@ -12,12 +12,12 @@ struct ReadingCompleteView: View {
                 .font(.system(size: 80))
                 .foregroundColor(.green)
 
-            Text("리딩이 저장되었습니다")
+            Text("Reading saved")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
 
-            Text("기록 탭에서 확인할 수 있습니다")
+            Text("You can view it in the Logs tab")
                 .font(.body)
                 .foregroundColor(.white.opacity(0.8))
 
@@ -27,7 +27,7 @@ struct ReadingCompleteView: View {
             Button(action: {
                 viewModel.reset()
             }) {
-                Text("홈으로 돌아가기")
+                Text("Back to Home")
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
@@ -38,8 +38,8 @@ struct ReadingCompleteView: View {
             }
             .padding(.horizontal)
             .padding(.bottom, 100)
-            .accessibilityLabel("홈으로 돌아가기")
-            .accessibilityHint("탭하여 처음으로 돌아가기")
+            .accessibilityLabel("Back to Home")
+            .accessibilityHint("Tap to return to the start")
         }
         .padding()
         .onAppear {

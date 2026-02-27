@@ -32,12 +32,12 @@ struct ReadingRowView: View {
                                 .frame(height: 50)
                                 .rotationEffect(.degrees(reading.cardReversals[index] ? 180 : 0))
 
-                            Text(card.koreanName)
+                            Text(card.name)
                                 .font(.caption2)
                                 .foregroundColor(.white.opacity(0.8))
                                 .lineLimit(1)
                         }
-                        .frame(minWidth: 60)
+                        .frame(minWidth: 90)
                     }
                 }
                 Spacer()
@@ -57,13 +57,13 @@ struct ReadingRowView: View {
 
             HStack(spacing: 12) {
                 if reading.questionAudioPath != nil {
-                    Label("질문", systemImage: "mic.fill")
+                    Label("Question", systemImage: "mic.fill")
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.5))
                 }
 
                 if reading.readingAudioPath != nil {
-                    Label("리딩", systemImage: "waveform")
+                    Label("Reading", systemImage: "waveform")
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.5))
                 }
@@ -77,18 +77,18 @@ struct ReadingRowView: View {
     }
 
     private var spreadTypeText: String {
-        reading.spreadType == "oneCard" ? "원 카드" : "쓰리 카드"
+        reading.spreadType == "oneCard" ? "One Card" : "Three Card"
     }
 
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy년 M월 d일 HH:mm"
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.dateFormat = "MMM d, yyyy HH:mm"
         return formatter.string(from: date)
     }
 
     private var accessibilityDescription: String {
-        let cards = reading.cardIds.compactMap { viewModel.getCard(for: $0)?.koreanName }
-        return "\(formatDate(reading.date)), \(spreadTypeText), 카드: \(cards.joined(separator: ", "))"
+        let cards = reading.cardIds.compactMap { viewModel.getCard(for: $0)?.name }
+        return "\(formatDate(reading.date)), \(spreadTypeText), Cards: \(cards.joined(separator: ", "))"
     }
 }

@@ -2,9 +2,9 @@ import Foundation
 import SwiftUI
 
 enum AppScreen: String, CaseIterable, Sendable {
-    case logs = "기록"
-    case home = "홈"
-    case settings = "설정"
+    case logs = "Logs"
+    case home = "Home"
+    case settings = "Settings"
 
     var icon: String {
         switch self {
@@ -16,9 +16,9 @@ enum AppScreen: String, CaseIterable, Sendable {
 
     var accessibilityLabel: String {
         switch self {
-        case .home: return "홈 화면, 타로 카드 뽑기"
-        case .logs: return "기록 화면, 이전 리딩 보기"
-        case .settings: return "설정 화면"
+        case .home: return "Home screen, draw tarot cards"
+        case .logs: return "Logs screen, view previous readings"
+        case .settings: return "Settings screen"
         }
     }
 }
@@ -38,7 +38,7 @@ final class NavigationState: ObservableObject {
         guard screen != currentScreen else { return }
 
         HapticService.shared.navigate()
-        SpeechService.shared.speak("\(screen.rawValue) 화면")
+        SpeechService.shared.speak("\(screen.rawValue) screen")
 
         withAnimation(.easeInOut(duration: 0.3)) {
             currentScreen = screen
@@ -64,12 +64,12 @@ final class NavigationState: ObservableObject {
     func openSettings() {
         HapticService.shared.pinch()
         showSettings = true
-        SpeechService.shared.speak("설정 열기")
+        SpeechService.shared.speak("Opening Settings")
     }
 
     func openTutorial() {
         HapticService.shared.pinch()
         showTutorial = true
-        SpeechService.shared.speak("도움말")
+        SpeechService.shared.speak("Help")
     }
 }

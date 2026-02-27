@@ -10,7 +10,7 @@ final class VoiceInputService: ObservableObject {
     @Published var transcribedText = ""
     @Published var authorizationStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
 
-    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "ko-KR"))
+    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
@@ -103,11 +103,11 @@ enum VoiceInputError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notAuthorized:
-            return "음성 인식 권한이 없습니다. 설정에서 권한을 허용해주세요."
+            return "Speech recognition is not authorized. Please enable it in Settings."
         case .recognizerNotAvailable:
-            return "음성 인식을 사용할 수 없습니다."
+            return "Speech recognition is not available."
         case .requestCreationFailed:
-            return "음성 인식 요청을 생성할 수 없습니다."
+            return "Failed to create a speech recognition request."
         }
     }
 }

@@ -13,27 +13,27 @@ enum AppGesture: Equatable, Sendable {
 
     var description: String {
         switch self {
-        case .tap: return "탭"
-        case .swipeLeft: return "왼쪽으로 스와이프"
-        case .swipeRight: return "오른쪽으로 스와이프"
-        case .swipeUp: return "위로 스와이프"
-        case .swipeDown: return "아래로 스와이프"
-        case .pinchIn: return "핀치 인"
-        case .pinchOut: return "핀치 아웃"
-        case .longPress: return "길게 누르기"
+        case .tap: return "Tap"
+        case .swipeLeft: return "Swipe left"
+        case .swipeRight: return "Swipe right"
+        case .swipeUp: return "Swipe up"
+        case .swipeDown: return "Swipe down"
+        case .pinchIn: return "Pinch in"
+        case .pinchOut: return "Pinch out"
+        case .longPress: return "Long press"
         }
     }
 
     var accessibilityAction: String {
         switch self {
-        case .tap: return "활성화"
-        case .swipeLeft: return "이전"
-        case .swipeRight: return "다음"
-        case .swipeUp: return "확인"
-        case .swipeDown: return "취소"
-        case .pinchIn: return "설정"
-        case .pinchOut: return "도움말"
-        case .longPress: return "추가 옵션"
+        case .tap: return "Activate"
+        case .swipeLeft: return "Previous"
+        case .swipeRight: return "Next"
+        case .swipeUp: return "Confirm"
+        case .swipeDown: return "Cancel"
+        case .pinchIn: return "Settings"
+        case .pinchOut: return "Help"
+        case .longPress: return "More options"
         }
     }
 }

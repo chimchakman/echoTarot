@@ -18,7 +18,7 @@ struct KeywordChipView: View {
                     Image(systemName: "xmark.circle.fill")
                         .font(.subheadline)
                 }
-                .accessibilityLabel("\(keyword) 삭제")
+                .accessibilityLabel("Delete \(keyword)")
             }
         }
         .padding(.horizontal, 12)
@@ -26,6 +26,6 @@ struct KeywordChipView: View {
         .background(isUserAdded ? Color.indigo.opacity(0.2) : Color.gray.opacity(0.15))
         .cornerRadius(16)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(isEditing ? "\(keyword), 삭제 가능" : keyword)
+        .accessibilityLabel(isEditing ? "\(keyword), deletable" : keyword)
     }
 }

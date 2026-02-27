@@ -6,6 +6,6 @@ final class TarotImageDescriptionService: @unchecked Sendable {
     private init() {}
 
     func description(for cardId: String) -> String {
-        TarotImageDescriptionData.descriptions[cardId] ?? "이 카드의 이미지 설명을 불러올 수 없습니다."
+        TarotImageDescriptionData.descriptions[cardId] ?? "Unable to load image description for this card."
     }
 }

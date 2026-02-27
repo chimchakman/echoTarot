@@ -13,7 +13,7 @@ struct SpreadSettingsView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
                                 Image(systemName: spread == .oneCard ? "1.circle.fill" : "3.circle.fill")
-                                Text(spread.koreanName)
+                                Text(spread.name)
                                     .fontWeight(.medium)
                             }
 
@@ -34,7 +34,7 @@ struct SpreadSettingsView: View {
                     .background(viewModel.defaultSpread == spread ? Color.indigo.opacity(0.5) : Color.black.opacity(0.5))
                     .cornerRadius(12)
                 }
-                .accessibilityLabel("\(spread.koreanName): \(spread.description)")
+                .accessibilityLabel("\(spread.name): \(spread.description)")
                 .accessibilityAddTraits(viewModel.defaultSpread == spread ? .isSelected : [])
             }
         }

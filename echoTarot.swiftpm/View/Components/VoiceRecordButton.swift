@@ -24,7 +24,7 @@ struct VoiceRecordButton: View {
                 .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isRecording)
 
             // Status text
-            Text(isRecording ? "녹음 중..." : "탭하여 녹음 시작")
+            Text(isRecording ? "Recording..." : "Tap to start recording")
                 .font(.title2)
                 .foregroundColor(.white)
 
@@ -42,8 +42,8 @@ struct VoiceRecordButton: View {
             toggleRecording()
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(isRecording ? "녹음 중, \(formatDuration(audioManager.recordingDuration))" : "녹음 버튼")
-        .accessibilityHint(isRecording ? "탭하여 녹음 중지" : "탭하여 녹음 시작")
+        .accessibilityLabel(isRecording ? "Recording, \(formatDuration(audioManager.recordingDuration))" : "Record button")
+        .accessibilityHint(isRecording ? "Tap to stop recording" : "Tap to start recording")
         .accessibilityAddTraits(.isButton)
     }
 
@@ -57,7 +57,7 @@ struct VoiceRecordButton: View {
 
     private func startRecording() {
         HapticService.shared.recordingStarted()
-        SpeechService.shared.speak("녹음을 시작합니다")
+        SpeechService.shared.speak("Starting recording")
 
         let url = audioManager.generateFilePath(for: recordingType)
         recordingURL = url
@@ -67,7 +67,7 @@ struct VoiceRecordButton: View {
             isRecording = true
         } catch {
             HapticService.shared.error()
-            SpeechService.shared.speak("녹음을 시작할 수 없습니다")
+            SpeechService.shared.speak("Unable to start recording")
         }
     }
 
@@ -75,7 +75,7 @@ struct VoiceRecordButton: View {
         HapticService.shared.recordingStopped()
 
         if let url = audioManager.stopRecording() {
-            SpeechService.shared.speak("녹음이 완료되었습니다")
+            SpeechService.shared.speak("Recording complete")
             isRecording = false
             onRecordingComplete(url)
         }

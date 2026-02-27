@@ -2,8 +2,8 @@ import Foundation
 import SwiftUI
 
 enum LogsSortOption: String, CaseIterable {
-    case dateDescending = "최신순"
-    case dateAscending = "오래된순"
+    case dateDescending = "Newest First"
+    case dateAscending = "Oldest First"
 }
 
 @MainActor
@@ -30,7 +30,7 @@ final class LogsViewModel: ObservableObject {
             applyFiltersAndSort()
             isLoading = false
         } catch {
-            errorMessage = "기록을 불러올 수 없습니다"
+            errorMessage = "Unable to load readings"
             isLoading = false
         }
     }
@@ -59,7 +59,7 @@ final class LogsViewModel: ObservableObject {
     func setSortOption(_ option: LogsSortOption) {
         sortOption = option
         HapticService.shared.selection()
-        SpeechService.shared.speak("\(option.rawValue)으로 정렬")
+        SpeechService.shared.speak("Sorted by \(option.rawValue)")
         applyFiltersAndSort()
     }
 
@@ -67,9 +67,9 @@ final class LogsViewModel: ObservableObject {
         selectedHashtag = hashtag
         HapticService.shared.selection()
         if let tag = hashtag {
-            SpeechService.shared.speak("\(tag) 필터 적용")
+            SpeechService.shared.speak("Filter applied: \(tag)")
         } else {
-            SpeechService.shared.speak("필터 해제")
+            SpeechService.shared.speak("Filter cleared")
         }
         applyFiltersAndSort()
     }
@@ -78,9 +78,9 @@ final class LogsViewModel: ObservableObject {
         selectedCardId = cardId
         HapticService.shared.selection()
         if let id = cardId, let card = allCards.first(where: { $0.id == id }) {
-            SpeechService.shared.speak("\(card.koreanName) 필터 적용")
+            SpeechService.shared.speak("Filter applied: \(card.name)")
         } else {
-            SpeechService.shared.speak("필터 해제")
+            SpeechService.shared.speak("Filter cleared")
         }
         applyFiltersAndSort()
     }
@@ -89,7 +89,7 @@ final class LogsViewModel: ObservableObject {
         selectedHashtag = nil
         selectedCardId = nil
         HapticService.shared.tap()
-        SpeechService.shared.speak("모든 필터 해제")
+        SpeechService.shared.speak("All filters cleared")
         applyFiltersAndSort()
     }
 
@@ -104,11 +104,11 @@ final class LogsViewModel: ObservableObject {
 
             try PersistenceManager.shared.deleteReading(reading)
             HapticService.shared.success()
-            SpeechService.shared.speak("기록이 삭제되었습니다")
+            SpeechService.shared.speak("Reading deleted")
             loadReadings()
         } catch {
             HapticService.shared.error()
-            SpeechService.shared.speak("삭제에 실패했습니다")
+            SpeechService.shared.speak("Failed to delete reading")
         }
     }
 

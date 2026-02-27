@@ -7,7 +7,7 @@ struct VolumeSettingView: View {
         VStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Label("음량", systemImage: "speaker.wave.2")
+                    Label("Volume", systemImage: "speaker.wave.2")
                         .foregroundColor(.white)
                     Spacer()
                     Text("\(Int(viewModel.speechVolume * 100))%")
@@ -19,8 +19,8 @@ struct VolumeSettingView: View {
                     set: { viewModel.updateSpeechVolume(Float($0)) }
                 ), in: 0...1, step: 0.1)
                 .tint(.indigo)
-                .accessibilityLabel("음량")
-                .accessibilityValue("\(Int(viewModel.speechVolume * 100))퍼센트")
+                .accessibilityLabel("Volume")
+                .accessibilityValue("\(Int(viewModel.speechVolume * 100)) percent")
             }
             .padding()
             .background(Color.black.opacity(0.5))
@@ -28,7 +28,7 @@ struct VolumeSettingView: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Label("말하기 속도", systemImage: "hare")
+                    Label("Speaking Speed", systemImage: "hare")
                         .foregroundColor(.white)
                     Spacer()
                     Text(speedLabel)
@@ -40,7 +40,7 @@ struct VolumeSettingView: View {
                     set: { viewModel.updateSpeechRate(Float($0)) }
                 ), in: 0.3...0.7, step: 0.1)
                 .tint(.indigo)
-                .accessibilityLabel("말하기 속도")
+                .accessibilityLabel("Speaking speed")
                 .accessibilityValue(speedLabel)
             }
             .padding()
@@ -51,11 +51,11 @@ struct VolumeSettingView: View {
 
     private var speedLabel: String {
         if viewModel.speechRate < 0.4 {
-            return "느림"
+            return "Slow"
         } else if viewModel.speechRate < 0.55 {
-            return "보통"
+            return "Normal"
         } else {
-            return "빠름"
+            return "Fast"
         }
     }
 }

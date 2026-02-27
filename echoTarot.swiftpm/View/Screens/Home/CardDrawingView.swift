@@ -5,12 +5,12 @@ struct CardDrawingView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("카드를 뽑는 중...")
+            Text("Drawing cards...")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
 
-            Text("\(viewModel.selectedSpread.koreanName)")
+            Text("\(viewModel.selectedSpread.name)")
                 .font(.title3)
                 .foregroundColor(.white.opacity(0.8))
 
@@ -46,13 +46,13 @@ struct CardDrawingView: View {
                 .frame(maxWidth: 100)
                 .rotationEffect(.degrees(viewModel.cardReversals[index] ? 180 : 0))
                 .transition(.scale.combined(with: .opacity))
-                .accessibilityLabel("\(index + 1)번째 카드: 카드가 뽑혔습니다")
+                .accessibilityLabel("Card \(index + 1): drawn")
         } else {
             // Empty slot
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.white.opacity(0.3), lineWidth: 2)
                 .frame(width: 80, height: 120)
-                .accessibilityLabel("\(index + 1)번째 카드: 대기 중")
+                .accessibilityLabel("Card \(index + 1): waiting")
         }
     }
 }

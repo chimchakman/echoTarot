@@ -14,7 +14,7 @@ struct LogsView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("리딩 기록")
+                Text("Reading Logs")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -29,29 +29,29 @@ struct LogsView: View {
                         .font(.title2)
                         .foregroundColor(.white)
                 }
-                .accessibilityLabel("정렬 및 필터")
+                .accessibilityLabel("Sort and filter")
             }
             .padding()
 
             // Custom segmented control with better visibility
             HStack(spacing: 0) {
                 segmentButton(
-                    title: "리딩 목록",
+                    title: "Reading List",
                     isSelected: selectedTab == .readings,
                     action: {
                         selectedTab = .readings
                         HapticService.shared.selection()
-                        SpeechService.shared.speak("리딩 목록")
+                        SpeechService.shared.speak("Reading List")
                     }
                 )
 
                 segmentButton(
-                    title: "카드 사전",
+                    title: "Card Dictionary",
                     isSelected: selectedTab == .dictionary,
                     action: {
                         selectedTab = .dictionary
                         HapticService.shared.selection()
-                        SpeechService.shared.speak("카드 사전")
+                        SpeechService.shared.speak("Card Dictionary")
                     }
                 )
             }
@@ -59,7 +59,7 @@ struct LogsView: View {
             .cornerRadius(10)
             .padding(.horizontal)
             .padding(.bottom, 8)
-            .accessibilityLabel("보기 모드 선택")
+            .accessibilityLabel("Select view mode")
 
             if selectedTab == .readings {
                 if viewModel.selectedHashtag != nil || viewModel.selectedCardId != nil {
@@ -105,7 +105,7 @@ struct LogsView: View {
 
                 if let cardId = viewModel.selectedCardId,
                    let card = viewModel.getCard(for: cardId) {
-                    filterChip(text: card.koreanName) {
+                    filterChip(text: card.name) {
                         viewModel.filterByCard(nil)
                     }
                 }
@@ -113,7 +113,7 @@ struct LogsView: View {
                 Button(action: {
                     viewModel.clearFilters()
                 }) {
-                    Text("모두 해제")
+                    Text("Clear all")
                         .font(.caption)
                         .foregroundColor(.white.opacity(0.6))
                 }
@@ -138,7 +138,7 @@ struct LogsView: View {
                 .padding(2)
         }
         .accessibilityLabel(title)
-        .accessibilityHint(isSelected ? "선택됨" : "탭하여 선택")
+        .accessibilityHint(isSelected ? "Selected" : "Tap to select")
     }
 
     private func filterChip(text: String, onRemove: @escaping () -> Void) -> some View {
@@ -167,18 +167,18 @@ struct LogsView: View {
                 .font(.system(size: 64))
                 .foregroundColor(.white.opacity(0.4))
 
-            Text("기록이 없습니다")
+            Text("No readings yet")
                 .font(.title2)
                 .foregroundColor(.white.opacity(0.8))
 
-            Text("홈 화면에서 첫 리딩을 시작해보세요")
+            Text("Start your first reading from the Home screen")
                 .font(.body)
                 .foregroundColor(.white.opacity(0.6))
 
             Spacer()
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("기록이 없습니다. 홈 화면에서 첫 리딩을 시작해보세요.")
+        .accessibilityLabel("No readings yet. Start your first reading from the Home screen.")
     }
 
     private var readingsList: some View {

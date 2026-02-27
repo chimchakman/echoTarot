@@ -44,18 +44,18 @@ struct ReadingDetailView: View {
 
                     VStack(spacing: 16) {
                         if let questionPath = reading.questionAudioPath {
-                            audioPlayButton(title: "질문 녹음", path: questionPath)
+                            audioPlayButton(title: "Question Recording", path: questionPath)
                         }
 
                         if let readingPath = reading.readingAudioPath {
-                            audioPlayButton(title: "리딩 녹음", path: readingPath)
+                            audioPlayButton(title: "Reading Recording", path: readingPath)
                         }
                     }
                     .padding()
 
                     if !reading.hashtags.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("태그")
+                            Text("Tags")
                                 .font(.headline)
 
                             FlowLayout(spacing: 8) {
@@ -75,7 +75,7 @@ struct ReadingDetailView: View {
 
                     if let notes = reading.notes, !notes.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("메모")
+                            Text("Notes")
                                 .font(.headline)
 
                             Text(notes)
@@ -88,11 +88,11 @@ struct ReadingDetailView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("리딩 상세")
+            .navigationTitle("Reading Detail")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("닫기") {
+                    Button("Close") {
                         dismiss()
                     }
                 }
@@ -105,14 +105,14 @@ struct ReadingDetailView: View {
                     }
                 }
             }
-            .alert("리딩을 삭제하시겠습니까?", isPresented: $showDeleteConfirmation) {
-                Button("취소", role: .cancel) {}
-                Button("삭제", role: .destructive) {
+            .alert("Delete this reading?", isPresented: $showDeleteConfirmation) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
                     viewModel.deleteReading(reading)
                     dismiss()
                 }
             } message: {
-                Text("삭제된 리딩은 복구할 수 없습니다.")
+                Text("Deleted readings cannot be recovered.")
             }
         }
     }
@@ -125,7 +125,7 @@ struct ReadingDetailView: View {
                 audioManager.stopPlaying()
             } else {
                 try? audioManager.playAudio(from: url)
-                SpeechService.shared.speak("\(title) 재생")
+                SpeechService.shared.speak("Playing \(title)")
             }
         }) {
             HStack {
@@ -137,13 +137,13 @@ struct ReadingDetailView: View {
             .background(Color.secondary.opacity(0.1))
             .cornerRadius(12)
         }
-        .accessibilityLabel("\(title) \(audioManager.isPlaying ? "정지" : "재생")")
+        .accessibilityLabel("\(title) \(audioManager.isPlaying ? "Stop" : "Play")")
     }
 
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.dateFormat = "yyyy년 M월 d일 EEEE HH:mm"
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.dateFormat = "EEEE, MMM d, yyyy HH:mm"
         return formatter.string(from: date)
     }
 }

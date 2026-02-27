@@ -8,7 +8,7 @@ struct CardImageDescriptionButton: View {
     var body: some View {
         Button(action: toggleSpeech) {
             Label(
-                isThisButtonSpeaking ? "설명 정지" : "이미지 설명 듣기",
+                isThisButtonSpeaking ? "Stop description" : "Hear image description",
                 systemImage: isThisButtonSpeaking ? "stop.circle.fill" : "play.circle.fill"
             )
             .font(.subheadline)
@@ -18,8 +18,8 @@ struct CardImageDescriptionButton: View {
             .background(Color.indigo.opacity(0.6))
             .cornerRadius(8)
         }
-        .accessibilityLabel(isThisButtonSpeaking ? "이미지 설명 정지" : "이미지 설명 듣기")
-        .accessibilityHint(isThisButtonSpeaking ? "탭하여 설명 정지" : "탭하여 카드 이미지 설명을 들으세요")
+        .accessibilityLabel(isThisButtonSpeaking ? "Stop image description" : "Hear image description")
+        .accessibilityHint(isThisButtonSpeaking ? "Tap to stop" : "Tap to hear a description of the card image")
         .onChange(of: speechService.isSpeaking) { isSpeaking in
             if !isSpeaking {
                 isThisButtonSpeaking = false

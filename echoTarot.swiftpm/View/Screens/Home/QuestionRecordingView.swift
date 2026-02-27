@@ -6,12 +6,12 @@ struct QuestionRecordingView: View {
     var body: some View {
         VStack(spacing: 24) {
             Spacer()
-            Text("질문을 녹음하세요")
+            Text("Record your question")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
 
-            Text("마음속 질문을 말씀해주세요")
+            Text("Speak the question on your mind")
                 .font(.body)
                 .foregroundColor(.white.opacity(0.8))
 
@@ -25,15 +25,15 @@ struct QuestionRecordingView: View {
             Button(action: {
                 viewModel.questionAudioURL = nil
                 HapticService.shared.tap()
-                SpeechService.shared.speak("질문 녹음을 건너뜁니다")
+                SpeechService.shared.speak("Skipping question recording")
                 viewModel.state = .hashtagInput
             }) {
-                Text("건너뛰기")
+                Text("Skip")
                     .font(.body)
                     .foregroundColor(.white.opacity(0.6))
             }
             .padding(.bottom, 100)
-            .accessibilityLabel("질문 녹음 건너뛰기")
+            .accessibilityLabel("Skip question recording")
         }
         .padding()
     }

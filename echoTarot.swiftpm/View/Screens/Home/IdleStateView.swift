@@ -13,7 +13,7 @@ struct IdleStateView: View {
                     .aspectRatio(contentMode: .fit)
                     .scaledToFit()
                     .frame(maxWidth: 500)
-                    .accessibilityLabel("에코 타로")
+                    .accessibilityLabel("Echo Tarot")
                     .padding(.horizontal, 30)
                     .padding(.top, 65)
                     
@@ -37,8 +37,8 @@ struct IdleStateView: View {
                     .onTapGesture {
                         viewModel.startReading()
                     }
-                    .accessibilityLabel("타로 테이블")
-                    .accessibilityHint("탭하여 타로 리딩 시작")
+                    .accessibilityLabel("Tarot table")
+                    .accessibilityHint("Tap to start a tarot reading")
 
                 Spacer()
 
@@ -55,7 +55,7 @@ struct IdleStateView: View {
                 }) {
                     HStack {
                         Image(systemName: viewModel.selectedSpread == .oneCard ? "1.circle.fill" : "3.circle.fill")
-                        Text(viewModel.selectedSpread.koreanName)
+                        Text(viewModel.selectedSpread.name)
                     }
                     .font(.title3)
                     .foregroundColor(.white)
@@ -64,13 +64,13 @@ struct IdleStateView: View {
                     .background(Color.indigo.opacity(0.6))
                     .cornerRadius(20)
                 }
-                .accessibilityLabel("스프레드: \(viewModel.selectedSpread.koreanName)")
-                .accessibilityHint("탭하여 변경")
+                .accessibilityLabel("Spread: \(viewModel.selectedSpread.name)")
+                .accessibilityHint("Tap to change")
                 .padding(.bottom, 20)
 
 
                 // Start instruction
-                Text("테이블을 탭하여 시작")
+                Text("Tap the table to begin")
                     .font(.title2)
                     .foregroundColor(.white.opacity(0.8))
                     .padding(.bottom, 60)

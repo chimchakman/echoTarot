@@ -64,35 +64,35 @@ struct TutorialSheet: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
                         tutorialSection(
-                            title: "제스처 안내",
+                            title: "Gesture Guide",
                             items: [
-                                ("탭", "주요 액션 실행"),
-                                ("왼쪽 스와이프", "다음 화면으로 이동 (기록 → 홈 → 설정)"),
-                                ("오른쪽 스와이프", "이전 화면으로 이동 (설정 → 홈 → 기록)"),
-                                ("위로 스와이프", "확인/진행"),
-                                ("아래로 스와이프", "취소/뒤로"),
-                                ("핀치 인", "설정 열기"),
-                                ("핀치 아웃", "도움말 열기")
+                                ("Tap", "Activate main action"),
+                                ("Swipe left", "Next screen (Logs → Home → Settings)"),
+                                ("Swipe right", "Previous screen (Settings → Home → Logs)"),
+                                ("Swipe up", "Confirm / proceed"),
+                                ("Swipe down", "Cancel / go back"),
+                                ("Pinch in", "Open Settings"),
+                                ("Pinch out", "Open Help")
                             ]
                         )
 
                         tutorialSection(
-                            title: "화면 안내",
+                            title: "Screen Guide",
                             items: [
-                                ("홈", "타로 카드를 뽑고 리딩을 녹음합니다"),
-                                ("기록", "이전 리딩 기록을 확인합니다"),
-                                ("설정", "앱 설정을 변경합니다")
+                                ("Home", "Draw tarot cards and record your reading"),
+                                ("Logs", "Review your previous reading history"),
+                                ("Settings", "Adjust app settings")
                             ]
                         )
                     }
                     .padding()
                 }
             }
-            .navigationTitle("도움말")
+            .navigationTitle("Help")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("닫기") {
+                    Button("Close") {
                         dismiss()
                     }
                 }

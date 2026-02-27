@@ -7,7 +7,7 @@ struct FilterView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("정렬") {
+                Section("Sort") {
                     ForEach(LogsSortOption.allCases, id: \.self) { option in
                         Button(action: {
                             viewModel.setSortOption(option)
@@ -27,12 +27,12 @@ struct FilterView: View {
                 }
 
                 if !viewModel.getAllHashtags().isEmpty {
-                    Section("태그 필터") {
+                    Section("Tag Filter") {
                         Button(action: {
                             viewModel.filterByHashtag(nil)
                         }) {
                             HStack {
-                                Text("전체")
+                                Text("All")
                                     .foregroundColor(.primary)
                                 Spacer()
                                 if viewModel.selectedHashtag == nil {
@@ -61,11 +61,11 @@ struct FilterView: View {
                     }
                 }
             }
-            .navigationTitle("정렬 및 필터")
+            .navigationTitle("Sort & Filter")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("완료") {
+                    Button("Done") {
                         dismiss()
                     }
                 }

@@ -4,10 +4,10 @@ enum TarotSpread: String, Codable, CaseIterable, Sendable {
     case oneCard = "oneCard"
     case threeCard = "threeCard"
 
-    var koreanName: String {
+    var name: String {
         switch self {
-        case .oneCard: return "원 카드"
-        case .threeCard: return "쓰리 카드"
+        case .oneCard: return "One Card"
+        case .threeCard: return "Three Card"
         }
     }
 
@@ -20,8 +20,8 @@ enum TarotSpread: String, Codable, CaseIterable, Sendable {
 
     var description: String {
         switch self {
-        case .oneCard: return "한 장의 카드로 지금 이 순간을 살펴보세요"
-        case .threeCard: return "세 장의 카드로 다양한 관점을 탐색해보세요"
+        case .oneCard: return "Explore this moment with a single card"
+        case .threeCard: return "Explore multiple perspectives with three cards"
         }
     }
 }

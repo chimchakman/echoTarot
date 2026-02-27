@@ -61,24 +61,24 @@ struct CardReadingsListView: View {
                 }
                 .padding(.bottom, 40)
             }
-            .navigationTitle(card.koreanName)
+            .navigationTitle(card.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("닫기") {
+                    Button("Close") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(isEditingKeywords ? "완료" : "편집") {
+                    Button(isEditingKeywords ? "Done" : "Edit") {
                         isEditingKeywords.toggle()
-                        let message = isEditingKeywords ? "키워드 편집 모드" : "키워드 편집 완료"
+                        let message = isEditingKeywords ? "Keyword edit mode" : "Keyword editing complete"
                         if #available(iOS 17.0, *) {
                             AccessibilityNotification.Announcement(message).post()
                         }
                     }
-                    .accessibilityLabel(isEditingKeywords ? "키워드 편집 완료" : "키워드 편집")
-                    .accessibilityHint(isEditingKeywords ? "편집 모드를 종료합니다" : "키워드를 추가하거나 삭제합니다")
+                    .accessibilityLabel(isEditingKeywords ? "Done editing keywords" : "Edit keywords")
+                    .accessibilityHint(isEditingKeywords ? "Exit edit mode" : "Add or remove keywords")
                 }
             }
             .sheet(item: Binding(
@@ -96,9 +96,9 @@ struct CardReadingsListView: View {
             .onAppear {
                 let count = readings.count
                 if count > 0 {
-                    SpeechService.shared.speak("\(card.koreanName) 카드가 포함된 리딩 \(count)개")
+                    SpeechService.shared.speak("\(count) reading\(count == 1 ? "" : "s") containing \(card.name)")
                 } else {
-                    SpeechService.shared.speak("\(card.koreanName) 카드가 포함된 리딩이 없습니다")
+                    SpeechService.shared.speak("No readings containing \(card.name)")
                 }
                 HapticService.shared.tap()
             }
@@ -117,13 +117,13 @@ struct CardReadingsListView: View {
                 .shadow(color: .black.opacity(0.4), radius: 12, x: 0, y: 6)
                 .accessibilityHidden(true)
 
-            Text(card.koreanName)
+            Text(card.name)
                 .font(.title2)
                 .fontWeight(.semibold)
                 .foregroundColor(.primary)
-                .accessibilityLabel("\(card.koreanName), \(card.suit.koreanName)")
+                .accessibilityLabel("\(card.name), \(card.suit.name)")
 
-            Text(card.suit.koreanName)
+            Text(card.suit.name)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .accessibilityHidden(true)
@@ -138,28 +138,28 @@ struct CardReadingsListView: View {
     private var keywordsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             keywordGroup(
-                title: "정방향",
+                title: "Upright",
                 keywords: effectiveUprightKeywords,
-                accessibilityLabel: "정방향 키워드: \(effectiveUprightKeywords.map(\.keyword).joined(separator: ", "))",
+                accessibilityLabel: "Upright keywords: \(effectiveUprightKeywords.map(\.keyword).joined(separator: ", "))",
                 onAdd: { showAddUprightSheet = true },
                 onDelete: { keyword in
                     settingsManager.removeUprightKeyword(keyword, for: card.id, baseKeywords: baseUprightKeywords)
                     if #available(iOS 17.0, *) {
-                            AccessibilityNotification.Announcement("정방향 키워드 \(keyword) 삭제됨").post()
+                            AccessibilityNotification.Announcement("Upright keyword \(keyword) removed").post()
                         }
                     HapticService.shared.tap()
                 }
             )
 
             keywordGroup(
-                title: "역방향",
+                title: "Reversed",
                 keywords: effectiveReversedKeywords,
-                accessibilityLabel: "역방향 키워드: \(effectiveReversedKeywords.map(\.keyword).joined(separator: ", "))",
+                accessibilityLabel: "Reversed keywords: \(effectiveReversedKeywords.map(\.keyword).joined(separator: ", "))",
                 onAdd: { showAddReversedSheet = true },
                 onDelete: { keyword in
                     settingsManager.removeReversedKeyword(keyword, for: card.id, baseKeywords: baseReversedKeywords)
                     if #available(iOS 17.0, *) {
-                            AccessibilityNotification.Announcement("역방향 키워드 \(keyword) 삭제됨").post()
+                            AccessibilityNotification.Announcement("Reversed keyword \(keyword) removed").post()
                         }
                     HapticService.shared.tap()
                 }
@@ -169,25 +169,25 @@ struct CardReadingsListView: View {
                 Button(role: .destructive) {
                     showResetAlert = true
                 } label: {
-                    Label("기본값으로 초기화", systemImage: "arrow.counterclockwise")
+                    Label("Reset to defaults", systemImage: "arrow.counterclockwise")
                 }
                 .padding(.top, 8)
-                .accessibilityLabel("키워드 기본값으로 초기화")
-                .accessibilityHint("이 카드의 모든 키워드 변경사항을 되돌립니다")
+                .accessibilityLabel("Reset keywords to defaults")
+                .accessibilityHint("Revert all keyword changes for this card")
             }
         }
         .padding(.horizontal)
-        .alert("키워드 초기화", isPresented: $showResetAlert) {
-            Button("초기화", role: .destructive) {
+        .alert("Reset Keywords", isPresented: $showResetAlert) {
+            Button("Reset", role: .destructive) {
                 settingsManager.resetKeywords(for: card.id)
                 HapticService.shared.impact(.medium)
                 if #available(iOS 17.0, *) {
-                    AccessibilityNotification.Announcement("키워드가 기본값으로 초기화되었습니다").post()
+                    AccessibilityNotification.Announcement("Keywords reset to defaults").post()
                 }
             }
-            Button("취소", role: .cancel) {}
+            Button("Cancel", role: .cancel) {}
         } message: {
-            Text("이 카드의 모든 키워드 변경사항이 삭제됩니다. 계속하시겠습니까?")
+            Text("All keyword changes for this card will be removed. Continue?")
         }
     }
 
@@ -214,15 +214,15 @@ struct CardReadingsListView: View {
                             .foregroundColor(.indigo)
                             .font(.title3)
                     }
-                    .accessibilityLabel("\(title) 키워드 추가")
+                    .accessibilityLabel("Add \(title) keyword")
                 }
             }
 
             if keywords.isEmpty {
-                Text("키워드 없음")
+                Text("No keywords")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
-                    .accessibilityLabel("\(title) 키워드 없음")
+                    .accessibilityLabel("No \(title) keywords")
             } else {
                 FlowLayout(spacing: 8) {
                     ForEach(keywords, id: \.keyword) { item in
@@ -246,13 +246,13 @@ struct CardReadingsListView: View {
     private var readingsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("리딩 기록")
+                Text("Reading History")
                     .font(.headline)
                     .foregroundColor(.primary)
 
                 Spacer()
 
-                Text("\(readings.count)개")
+                Text("\(readings.count)")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -260,12 +260,12 @@ struct CardReadingsListView: View {
 
             if readings.isEmpty {
                 VStack(spacing: 12) {
-                    Text("이 카드가 포함된 리딩이 없습니다")
+                    Text("No readings contain this card yet")
                         .font(.body)
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.center)
 
-                    Text("홈 화면에서 새로운 리딩을 시작해보세요")
+                    Text("Start a new reading from the Home screen")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -274,7 +274,7 @@ struct CardReadingsListView: View {
                 .padding(.vertical, 24)
                 .padding(.horizontal)
                 .accessibilityElement(children: .combine)
-                .accessibilityLabel("이 카드가 포함된 리딩이 없습니다. 홈 화면에서 새로운 리딩을 시작해보세요.")
+                .accessibilityLabel("No readings contain this card. Start a new reading from the Home screen.")
             } else {
                 LazyVStack(spacing: 12) {
                     ForEach(readings, id: \.id) { reading in
@@ -295,7 +295,7 @@ struct CardReadingsListView: View {
     private func addKeywordSheet(isUpright: Bool) -> some View {
         NavigationStack {
             VStack(spacing: 20) {
-                TextField(isUpright ? "정방향 키워드 입력" : "역방향 키워드 입력", text: $newKeywordText)
+                TextField(isUpright ? "Enter upright keyword" : "Enter reversed keyword", text: $newKeywordText)
                     .textFieldStyle(.roundedBorder)
                     .padding()
                     .onSubmit {
@@ -304,18 +304,18 @@ struct CardReadingsListView: View {
 
                 Spacer()
             }
-            .navigationTitle(isUpright ? "정방향 키워드 추가" : "역방향 키워드 추가")
+            .navigationTitle(isUpright ? "Add Upright Keyword" : "Add Reversed Keyword")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("취소") {
+                    Button("Cancel") {
                         newKeywordText = ""
                         if isUpright { showAddUprightSheet = false }
                         else { showAddReversedSheet = false }
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("추가") {
+                    Button("Add") {
                         submitNewKeyword(isUpright: isUpright)
                     }
                     .disabled(newKeywordText.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -337,9 +337,9 @@ struct CardReadingsListView: View {
             showAddReversedSheet = false
         }
 
-        let direction = isUpright ? "정방향" : "역방향"
+        let direction = isUpright ? "Upright" : "Reversed"
         if #available(iOS 17.0, *) {
-            AccessibilityNotification.Announcement("\(direction) 키워드 \(trimmed) 추가됨").post()
+            AccessibilityNotification.Announcement("\(direction) keyword \(trimmed) added").post()
         }
         HapticService.shared.tap()
         newKeywordText = ""

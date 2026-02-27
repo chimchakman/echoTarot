@@ -5,12 +5,12 @@ struct ReadingRecordingView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Text("리딩을 녹음하세요")
+            Text("Record your reading")
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
 
-            Text("카드가 전하는 메시지를 말씀해주세요")
+            Text("Speak the message the cards are conveying")
                 .font(.body)
                 .foregroundColor(.white.opacity(0.8))
 
@@ -23,7 +23,7 @@ struct ReadingRecordingView: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 60)
                             .rotationEffect(.degrees(viewModel.cardReversals[index] ? 180 : 0))
-                        Text(card.koreanName)
+                        Text(card.name)
                             .font(.caption2)
                             .foregroundColor(.white.opacity(0.8))
                     }
@@ -42,12 +42,12 @@ struct ReadingRecordingView: View {
             Button(action: {
                 viewModel.skipReadingRecording()
             }) {
-                Text("건너뛰기")
+                Text("Skip")
                     .font(.body)
                     .foregroundColor(.white.opacity(0.6))
             }
             .padding(.bottom, 100)
-            .accessibilityLabel("리딩 녹음 건너뛰기")
+            .accessibilityLabel("Skip reading recording")
         }
         .padding()
     }
