@@ -39,6 +39,9 @@ struct IdleStateView: View {
                     }
                     .accessibilityLabel("Tarot table")
                     .accessibilityHint("Tap to start a tarot reading")
+                    .accessibilityAction(.default) {
+                        viewModel.startReading()
+                    }
 
                 Spacer()
 

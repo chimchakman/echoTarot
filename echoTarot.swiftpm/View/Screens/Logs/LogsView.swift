@@ -190,6 +190,10 @@ struct LogsView: View {
                             HapticService.shared.tap()
                             selectedReading = reading
                         }
+                        .accessibilityAction(.default) {
+                            HapticService.shared.tap()
+                            selectedReading = reading
+                        }
                 }
             }
             .padding()

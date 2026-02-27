@@ -10,6 +10,8 @@ struct FullScreenGestureModifier: ViewModifier {
     let onPinchOut: (() -> Void)?
     let onLongPress: (() -> Void)?
 
+    @Environment(\.accessibilityVoiceOverEnabled) private var isVoiceOverEnabled
+
     @State private var scale: CGFloat = 1.0
     @State private var lastScale: CGFloat = 1.0
 
@@ -33,19 +35,24 @@ struct FullScreenGestureModifier: ViewModifier {
         self.onLongPress = onLongPress
     }
 
+    @ViewBuilder
     func body(content: Content) -> some View {
-        content
-            .contentShape(Rectangle())
-            .simultaneousGesture(createTapGesture())
-            .simultaneousGesture(createSwipeGestures())
-            .simultaneousGesture(createPinchGesture())
-            .simultaneousGesture(createLongPressGesture())
-            .accessibilityAction(.default) {
-                onTap?()
-            }
-            .accessibilityAction(.escape) {
-                onSwipeDown?()
-            }
+        if isVoiceOverEnabled {
+            // VoiceOver active: pass through without any raw gesture recognizers.
+            // Child views' .accessibilityAction(.default) will handle double-tap directly.
+            // Do NOT add .accessibilityAction(.default) here when onTap is nil — a nil handler
+            // at the container level intercepts and swallows child accessibility actions.
+            content
+                .applyIf(onTap != nil) { $0.accessibilityAction(.default) { onTap?() } }
+                .applyIf(onSwipeDown != nil) { $0.accessibilityAction(.escape) { onSwipeDown?() } }
+        } else {
+            content
+                .contentShape(Rectangle())
+                .simultaneousGesture(createTapGesture())
+                .simultaneousGesture(createSwipeGestures())
+                .simultaneousGesture(createPinchGesture())
+                .simultaneousGesture(createLongPressGesture())
+        }
     }
 
     private func createTapGesture() -> some Gesture {
@@ -118,6 +125,15 @@ struct FullScreenGestureModifier: ViewModifier {
 // MARK: - View Extension
 
 extension View {
+    @ViewBuilder
+    func applyIf<T: View>(_ condition: Bool, transform: (Self) -> T) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
+
     func fullScreenGestures(
         onTap: (() -> Void)? = nil,
         onSwipeLeft: (() -> Void)? = nil,

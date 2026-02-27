@@ -53,6 +53,9 @@ struct TutorialOverlay: View {
             .accessibilityElement(children: .combine)
             .accessibilityLabel("Tutorial: \(scripts[currentIndex])")
             .accessibilityHint("Tap to move to the next step")
+            .accessibilityAction(.default) {
+                advanceToNext()
+            }
         }
     }
 

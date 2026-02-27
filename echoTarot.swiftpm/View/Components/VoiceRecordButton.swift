@@ -46,6 +46,9 @@ struct VoiceRecordButton: View {
         .accessibilityLabel(isRecording ? "Recording, \(formatDuration(audioManager.recordingDuration))" : "Record button")
         .accessibilityHint(isRecording ? "Tap to stop recording" : "Tap to start recording")
         .accessibilityAddTraits(.isButton)
+        .accessibilityAction(.default) {
+            toggleRecording()
+        }
     }
 
     private func toggleRecording() {
