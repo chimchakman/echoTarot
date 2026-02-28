@@ -21,13 +21,13 @@ final class SettingsViewModel: ObservableObject {
     func updateSpeechVolume(_ value: Float) {
         speechVolume = value
         settingsManager.speechVolume = value
-        SpeechService.shared.speak("Volume test")
+        SpeechService.shared.speakAlways("Volume test")
     }
 
     func updateSpeechRate(_ value: Float) {
         speechRate = value
         settingsManager.speechRate = value
-        SpeechService.shared.speak("Speed test")
+        SpeechService.shared.speakAlways("Speed test")
     }
 
     func toggleHaptic() {
