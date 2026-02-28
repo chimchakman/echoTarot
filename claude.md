@@ -8,6 +8,11 @@
 - 컴포넌트 중에도 다시 쓸 수 있는 것이 있다면 가져와서 사용한다.
 - 코드의 중복을 최소화하고, 공통 로직은 별도의 함수나 컴포넌트로 분리한다.
 
+## 환경 제약
+
+- **`import UIKit` 사용 금지**: Swift Playgrounds 환경에서 `import UIKit`은 빌드 오류를 유발한다. 절대 추가하지 말 것.
+- `UIAccessibility`, `AVFoundation` 등 UIKit 기반 API는 `import SwiftUI` 또는 `import Foundation`만으로도 사용 가능한 것만 허용한다.
+
 ## 접근성 (Accessibility) 가이드라인
 
 - 모든 View에 `.accessibilityLabel()` 필수
