@@ -1,11 +1,11 @@
 import SwiftUI
-import UIKit
 
 struct ReadingDetailView: View {
     let reading: any ReadingProtocol
     @ObservedObject var viewModel: LogsViewModel
     @ObservedObject var audioManager = AudioFileManager.shared
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityVoiceOverEnabled) private var isVoiceOverEnabled
 
     @State private var currentCardIndex = 0
     @State private var showDeleteConfirmation = false
@@ -125,20 +125,25 @@ struct ReadingDetailView: View {
     }
 
     private func audioPlayButton(title: String, path: String) -> some View {
-        Button(action: {
+        let url = URL(fileURLWithPath: path)
+        let isThisPlaying = audioManager.isPlaying && audioManager.currentlyPlayingURL?.path == path
+
+        return Button(action: {
             HapticService.shared.tap()
-            let url = URL(fileURLWithPath: path)
-            if audioManager.isPlaying {
+            if isThisPlaying {
                 audioManager.stopPlaying()
             } else {
+                if audioManager.isPlaying {
+                    audioManager.stopPlaying()
+                }
                 try? audioManager.playAudio(from: url)
-                if !UIAccessibility.isVoiceOverRunning {
+                if !isVoiceOverEnabled {
                     SpeechService.shared.speak("Playing \(title)")
                 }
             }
         }) {
             HStack {
-                Image(systemName: audioManager.isPlaying ? "stop.fill" : "play.fill")
+                Image(systemName: isThisPlaying ? "stop.fill" : "play.fill")
                 Text(title)
                 Spacer()
             }
@@ -146,7 +151,7 @@ struct ReadingDetailView: View {
             .background(Color.secondary.opacity(0.1))
             .cornerRadius(12)
         }
-        .accessibilityLabel("\(title) \(audioManager.isPlaying ? "Stop" : "Play")")
+        .accessibilityLabel("\(title), \(isThisPlaying ? "Stop" : "Play")")
     }
 
     private func formatDate(_ date: Date) -> String {

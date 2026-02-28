@@ -10,6 +10,7 @@ final class AudioFileManager: NSObject, ObservableObject {
 
     @Published var isRecording = false
     @Published var isPlaying = false
+    @Published var currentlyPlayingURL: URL?
     @Published var recordingDuration: TimeInterval = 0
 
     private var audioRecorder: AVAudioRecorder?
@@ -110,12 +111,14 @@ final class AudioFileManager: NSObject, ObservableObject {
         audioPlayer?.delegate = self
         audioPlayer?.play()
         isPlaying = true
+        currentlyPlayingURL = url
     }
 
     func stopPlaying() {
         audioPlayer?.stop()
         audioPlayer = nil
         isPlaying = false
+        currentlyPlayingURL = nil
         #if os(iOS)
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         #endif
@@ -136,6 +139,7 @@ extension AudioFileManager: AVAudioPlayerDelegate {
     nonisolated func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         Task { @MainActor in
             self.isPlaying = false
+            self.currentlyPlayingURL = nil
         }
     }
 }

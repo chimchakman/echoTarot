@@ -1,9 +1,9 @@
 import SwiftUI
-import UIKit
 
 struct TarotCardDictionaryView: View {
     @ObservedObject var viewModel: LogsViewModel
     @State private var selectedCard: TarotCard?
+    @Environment(\.accessibilityVoiceOverEnabled) private var isVoiceOverEnabled
 
     private let suits: [TarotSuit] = [.major, .cups, .pentacles, .swords, .wands]
 
@@ -21,7 +21,7 @@ struct TarotCardDictionaryView: View {
             CardReadingsListView(card: card, viewModel: viewModel)
         }
         .onAppear {
-            if !UIAccessibility.isVoiceOverRunning {
+            if !isVoiceOverEnabled {
                 SpeechService.shared.speak("Tarot Card Dictionary")
             }
             HapticService.shared.tap()
@@ -54,18 +54,18 @@ struct TarotCardDictionaryView: View {
                     .foregroundColor(.white.opacity(0.6))
             }
             .padding(.vertical, 8)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("\(suit.name), \(cards.count) cards")
         }
         .padding()
         .background(Color.black.opacity(0.5))
         .cornerRadius(12)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(suit.name), \(cards.count) cards")
     }
 
     private func cardButton(card: TarotCard) -> some View {
         Button(action: {
             HapticService.shared.tap()
-            if !UIAccessibility.isVoiceOverRunning {
+            if !isVoiceOverEnabled {
                 SpeechService.shared.speak(card.name)
             }
             selectedCard = card

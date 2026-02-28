@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 enum LogsTab {
     case readings
@@ -11,14 +10,17 @@ struct LogsView: View {
     @State private var selectedReading: (any ReadingProtocol)?
     @State private var showFilterSheet = false
     @State private var selectedTab: LogsTab = .readings
+    @AccessibilityFocusState private var isTitleFocused: Bool
+    @Environment(\.accessibilityVoiceOverEnabled) private var isVoiceOverEnabled
 
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Reading Logs")
+                Text("Logs")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
+                    .accessibilityFocused($isTitleFocused)
 
                 Spacer()
 
@@ -42,7 +44,7 @@ struct LogsView: View {
                     action: {
                         selectedTab = .readings
                         HapticService.shared.selection()
-                        if !UIAccessibility.isVoiceOverRunning {
+                        if !isVoiceOverEnabled {
                             SpeechService.shared.speak("Reading List")
                         }
                     }
@@ -54,7 +56,7 @@ struct LogsView: View {
                     action: {
                         selectedTab = .dictionary
                         HapticService.shared.selection()
-                        if !UIAccessibility.isVoiceOverRunning {
+                        if !isVoiceOverEnabled {
                             SpeechService.shared.speak("Card Dictionary")
                         }
                     }
@@ -64,7 +66,6 @@ struct LogsView: View {
             .cornerRadius(10)
             .padding(.horizontal)
             .padding(.bottom, 8)
-            .accessibilityLabel("Select view mode")
 
             if selectedTab == .readings {
                 if viewModel.selectedHashtag != nil || viewModel.selectedCardId != nil {
@@ -96,6 +97,9 @@ struct LogsView: View {
         }
         .onAppear {
             viewModel.loadReadings()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                isTitleFocused = true
+            }
         }
     }
 
@@ -208,7 +212,7 @@ struct LogsView: View {
 }
 // Wrapper to make ReadingProtocol Identifiable for sheet presentation
 struct AnyReadingWrapper: Identifiable {
-    let id = UUID()
+    var id: UUID { reading.id }
     let reading: any ReadingProtocol
 }
 

@@ -11,6 +11,7 @@ struct CardReadingsListView: View {
     @State private var newKeywordText = ""
     @State private var showResetAlert = false
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityVoiceOverEnabled) private var isVoiceOverEnabled
 
     private var customization: CardKeywordCustomization {
         settingsManager.customization(for: card.id)
@@ -94,13 +95,15 @@ struct CardReadingsListView: View {
                 addKeywordSheet(isUpright: false)
             }
             .onAppear {
-                if !UIAccessibility.isVoiceOverRunning {
-                    let count = readings.count
-                    if count > 0 {
-                        SpeechService.shared.speak("\(count) reading\(count == 1 ? "" : "s") containing \(card.name)")
-                    } else {
-                        SpeechService.shared.speak("No readings containing \(card.name)")
-                    }
+                let count = readings.count
+                let message = count > 0
+                    ? "\(count) reading\(count == 1 ? "" : "s") containing \(card.name)"
+                    : "No readings containing \(card.name)"
+
+                if isVoiceOverEnabled {
+                    SpeechService.shared.announceAfterDelay(message, delay: SpeechService.longDelay)
+                } else {
+                    SpeechService.shared.speak(message)
                 }
                 HapticService.shared.tap()
             }
@@ -145,7 +148,6 @@ struct CardReadingsListView: View {
             keywordGroup(
                 title: "Upright",
                 keywords: effectiveUprightKeywords,
-                accessibilityLabel: "Upright keywords: \(effectiveUprightKeywords.map(\.keyword).joined(separator: ", "))",
                 onAdd: { showAddUprightSheet = true },
                 onDelete: { keyword in
                     settingsManager.removeUprightKeyword(keyword, for: card.id, baseKeywords: baseUprightKeywords)
@@ -159,7 +161,6 @@ struct CardReadingsListView: View {
             keywordGroup(
                 title: "Reversed",
                 keywords: effectiveReversedKeywords,
-                accessibilityLabel: "Reversed keywords: \(effectiveReversedKeywords.map(\.keyword).joined(separator: ", "))",
                 onAdd: { showAddReversedSheet = true },
                 onDelete: { keyword in
                     settingsManager.removeReversedKeyword(keyword, for: card.id, baseKeywords: baseReversedKeywords)
@@ -199,7 +200,6 @@ struct CardReadingsListView: View {
     private func keywordGroup(
         title: String,
         keywords: [(keyword: String, isUserAdded: Bool)],
-        accessibilityLabel: String,
         onAdd: @escaping () -> Void,
         onDelete: @escaping (String) -> Void
     ) -> some View {
@@ -241,7 +241,6 @@ struct CardReadingsListView: View {
                     }
                 }
                 .accessibilityElement(children: .contain)
-                .accessibilityLabel(accessibilityLabel)
             }
         }
     }
