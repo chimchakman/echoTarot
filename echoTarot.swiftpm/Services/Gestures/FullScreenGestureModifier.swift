@@ -42,9 +42,13 @@ struct FullScreenGestureModifier: ViewModifier {
             // Child views' .accessibilityAction(.default) will handle double-tap directly.
             // Do NOT add .accessibilityAction(.default) here when onTap is nil — a nil handler
             // at the container level intercepts and swallows child accessibility actions.
-            content
-                .applyIf(onTap != nil) { $0.accessibilityAction(.default) { onTap?() } }
-                .applyIf(onSwipeDown != nil) { $0.accessibilityAction(.escape) { onSwipeDown?() } }
+            VoiceOverGestureView(
+                content: content,
+                onTap: onTap,
+                onSwipeDown: onSwipeDown,
+                onSwipeLeft: onSwipeLeft,
+                onSwipeRight: onSwipeRight
+            )
         } else {
             content
                 .contentShape(Rectangle())
@@ -118,6 +122,68 @@ struct FullScreenGestureModifier: ViewModifier {
                 GestureHandler.shared.handleGesture(.longPress)
                 HapticService.shared.impact(.heavy)
                 onLongPress?()
+            }
+    }
+}
+
+// MARK: - VoiceOver Helper View
+
+private struct VoiceOverGestureView<C: View>: View {
+    let content: C
+    let onTap: (() -> Void)?
+    let onSwipeDown: (() -> Void)?
+    let onSwipeLeft: (() -> Void)?
+    let onSwipeRight: (() -> Void)?
+
+    var body: some View {
+        contentWithBaseActions
+            .modifier(NavigationActionsModifier(
+                onSwipeLeft: onSwipeLeft,
+                onSwipeRight: onSwipeRight
+            ))
+    }
+
+    @ViewBuilder
+    private var contentWithBaseActions: some View {
+        if let onTap, let onSwipeDown {
+            content
+                .accessibilityAction(.default) { onTap() }
+                .accessibilityAction(.escape) { onSwipeDown() }
+        } else if let onTap {
+            content
+                .accessibilityAction(.default) { onTap() }
+        } else if let onSwipeDown {
+            content
+                .accessibilityAction(.escape) { onSwipeDown() }
+        } else {
+            content
+        }
+    }
+}
+
+private struct NavigationActionsModifier: ViewModifier {
+    let onSwipeLeft: (() -> Void)?
+    let onSwipeRight: (() -> Void)?
+
+    func body(content: Content) -> some View {
+        content
+            .accessibilityScrollAction { edge in
+                switch edge {
+                case .trailing:
+                    onSwipeRight?()
+                case .leading:
+                    onSwipeLeft?()
+                default:
+                    break
+                }
+            }
+            .accessibilityActions {
+                if let onSwipeLeft {
+                    Button("Navigate to next screen", action: onSwipeLeft)
+                }
+                if let onSwipeRight {
+                    Button("Navigate to previous screen", action: onSwipeRight)
+                }
             }
     }
 }
