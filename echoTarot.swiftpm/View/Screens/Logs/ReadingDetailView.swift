@@ -31,6 +31,9 @@ struct ReadingDetailView: View {
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     .frame(height: 400)
+                    .onChange(of: currentCardIndex) { _ in
+                        SpeechService.shared.stop()
+                    }
 
                     if reading.cardIds.count > 1 {
                         HStack(spacing: 8) {
@@ -114,6 +117,9 @@ struct ReadingDetailView: View {
                 }
             } message: {
                 Text("Deleted readings cannot be recovered.")
+            }
+            .onDisappear {
+                SpeechService.shared.stop()
             }
         }
     }

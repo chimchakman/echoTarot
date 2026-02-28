@@ -148,10 +148,14 @@ struct CardRevealedView: View {
             }
         }
         .onChange(of: currentCardIndex) { newIndex in
+            SpeechService.shared.stop()
             if UIAccessibility.isVoiceOverRunning {
                 let announcement = cardAnnouncementText(for: newIndex)
                 UIAccessibility.post(notification: .announcement, argument: announcement)
             }
+        }
+        .onDisappear {
+            SpeechService.shared.stop()
         }
     }
 

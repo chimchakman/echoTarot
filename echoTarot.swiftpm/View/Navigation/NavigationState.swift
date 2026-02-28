@@ -39,6 +39,7 @@ final class NavigationState: ObservableObject {
         guard screen != currentScreen else { return }
 
         HapticService.shared.navigate()
+        SpeechService.shared.stop()
         if !UIAccessibility.isVoiceOverRunning {
             SpeechService.shared.speak("\(screen.rawValue) screen")
         } else {

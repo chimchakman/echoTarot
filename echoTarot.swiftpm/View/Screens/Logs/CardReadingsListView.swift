@@ -104,6 +104,9 @@ struct CardReadingsListView: View {
                 }
                 HapticService.shared.tap()
             }
+            .onDisappear {
+                SpeechService.shared.stop()
+            }
         }
     }
 
