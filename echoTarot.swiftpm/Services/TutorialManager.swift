@@ -8,6 +8,8 @@ final class TutorialManager: ObservableObject {
     @Published var isShowingTutorial = false
     @Published var currentScreen: String?
     @Published var currentScripts: [String] = []
+    @Published var isPostTutorial = false
+    @Published var focusTableButtonAfterTutorial = false
 
     private let settingsManager = SettingsManager.shared
 
@@ -30,18 +32,21 @@ final class TutorialManager: ObservableObject {
             settingsManager.markTutorialShown(for: screen)
         }
 
+        isPostTutorial = true
         isShowingTutorial = false
         currentScreen = nil
         currentScripts = []
 
         HapticService.shared.success()
         SpeechService.shared.speakAlways("Tutorial complete.") {
-            // Wait for VoiceOver to finish auto-focusing the home screen elements
-            // before announcing, so the announcement is not dropped.
-            DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.longDelay) {
-                SpeechService.shared.speak(
-                    "Home screen. Tap the table button to start today's reading. Swipe left for settings, swipe right for logs."
-                )
+            SpeechService.shared.speakAlways(
+                "Home. Tap the table button to start today's reading. Swipe left for settings, swipe right for logs."
+            ) {
+                self.focusTableButtonAfterTutorial = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.isPostTutorial = false
+                    self.focusTableButtonAfterTutorial = false
+                }
             }
         }
     }

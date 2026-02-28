@@ -24,6 +24,8 @@ final class SpeechService: NSObject, ObservableObject {
     static let longDelay: TimeInterval = 1.0
     /// Extra long delay for focus THEN announcement sequencing
     static let focusThenAnnounceDelay: TimeInterval = 0.8
+    /// Tutorial speech rate (faster than default for efficiency)
+    static let tutorialSpeechRate: Float = 0.57
 
     override private init() {
         super.init()
@@ -67,7 +69,7 @@ final class SpeechService: NSObject, ObservableObject {
         }
     }
 
-    private func speakViaSynthesizer(_ text: String, completion: (() -> Void)? = nil) {
+    private func speakViaSynthesizer(_ text: String, rate: Float? = nil, completion: (() -> Void)? = nil) {
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
@@ -76,7 +78,7 @@ final class SpeechService: NSObject, ObservableObject {
 
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        utterance.rate = SettingsManager.shared.speechRate
+        utterance.rate = rate ?? SettingsManager.shared.speechRate
         utterance.volume = SettingsManager.shared.speechVolume
         utterance.pitchMultiplier = 1.0
 
@@ -115,6 +117,12 @@ final class SpeechService: NSObject, ObservableObject {
     /// Use this when the app controls audio exclusively (e.g. tutorial overlay).
     func speakAlways(_ text: String, completion: (() -> Void)? = nil) {
         speakViaSynthesizer(text, completion: completion)
+    }
+
+    /// Always speaks via AVSpeechSynthesizer with a custom speech rate.
+    /// Use this when the app controls audio exclusively and needs specific pacing (e.g. tutorial).
+    func speakAlways(_ text: String, rate: Float, completion: (() -> Void)? = nil) {
+        speakViaSynthesizer(text, rate: rate, completion: completion)
     }
 
     func stop() {

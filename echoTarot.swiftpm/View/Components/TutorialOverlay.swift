@@ -67,7 +67,7 @@ struct TutorialOverlay: View {
         // For all subsequent steps, VoiceOver does not auto-announce label changes,
         // so speakAlways is the sole audio source.
         if isInitial && SpeechService.shared.isVoiceOverRunning { return }
-        SpeechService.shared.speakAlways(scripts[currentIndex])
+        SpeechService.shared.speakAlways(scripts[currentIndex], rate: SpeechService.tutorialSpeechRate)
     }
 
     private func advanceToNext() {

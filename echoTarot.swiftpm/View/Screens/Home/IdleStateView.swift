@@ -4,6 +4,8 @@ struct IdleStateView: View {
     @ObservedObject var viewModel: HomeViewModel
     @Binding var isTransitioning: Bool
     @AccessibilityFocusState private var isTableFocused: Bool
+    @ObservedObject private var tutorialManager = TutorialManager.shared
+    @ObservedObject private var navigationState = NavigationState.shared
 
     var body: some View {
         ZStack {
@@ -83,13 +85,30 @@ struct IdleStateView: View {
             }
         }
         .onAppear {
-            // Guard against setting focus during state transitions
-            guard !isTransitioning else { return }
+            // Guard against setting focus during state transitions or post-tutorial
+            guard !isTransitioning && !tutorialManager.isPostTutorial else { return }
 
-            // Set VoiceOver focus to the table button after a brief delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.shortDelay) {
-                // Double-check we're not transitioning when the delay fires
-                guard !isTransitioning else { return }
+            if navigationState.didNavigateToHome && SpeechService.shared.isVoiceOverRunning {
+                // Navigated from another screen with VoiceOver on:
+                // "Home." announcement fires at mediumDelay (0.5s), lasts ~0.75s
+                // Set focus AFTER announcement ends (~1.3s total)
+                let focusDelay = SpeechService.mediumDelay + 0.9
+                navigationState.didNavigateToHome = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + focusDelay) {
+                    guard !isTransitioning else { return }
+                    isTableFocused = true
+                }
+            } else {
+                // Cold start or VoiceOver off: use short delay as before
+                navigationState.didNavigateToHome = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.shortDelay) {
+                    guard !isTransitioning else { return }
+                    isTableFocused = true
+                }
+            }
+        }
+        .onChange(of: tutorialManager.focusTableButtonAfterTutorial) { triggered in
+            if triggered {
                 isTableFocused = true
             }
         }

@@ -1,6 +1,5 @@
 import Foundation
 import SwiftUI
-import UIKit
 
 enum AppScreen: String, CaseIterable, Sendable {
     case logs = "Logs"
@@ -32,6 +31,7 @@ final class NavigationState: ObservableObject {
     @Published var showSettings = false
     @Published var showTutorial = false
     @Published var isReadingActive: Bool = false
+    @Published var didNavigateToHome: Bool = false
 
     private init() {}
 
@@ -40,7 +40,7 @@ final class NavigationState: ObservableObject {
 
         HapticService.shared.navigate()
         SpeechService.shared.stop()
-        if !UIAccessibility.isVoiceOverRunning {
+        if !SpeechService.shared.isVoiceOverRunning {
             SpeechService.shared.speak("\(screen.rawValue) screen")
         } else {
             // Post custom announcement instead of .screenChanged to control exactly what is spoken
@@ -48,6 +48,10 @@ final class NavigationState: ObservableObject {
                 screenAnnouncement(for: screen),
                 delay: SpeechService.mediumDelay
             )
+        }
+
+        if screen == .home {
+            didNavigateToHome = true
         }
 
         withAnimation(.easeInOut(duration: 0.3)) {
@@ -89,7 +93,7 @@ final class NavigationState: ObservableObject {
     func openSettings() {
         HapticService.shared.pinch()
         showSettings = true
-        if !UIAccessibility.isVoiceOverRunning {
+        if !SpeechService.shared.isVoiceOverRunning {
             SpeechService.shared.speak("Opening Settings")
         }
     }
@@ -97,7 +101,7 @@ final class NavigationState: ObservableObject {
     func openTutorial() {
         HapticService.shared.pinch()
         showTutorial = true
-        if !UIAccessibility.isVoiceOverRunning {
+        if !SpeechService.shared.isVoiceOverRunning {
             SpeechService.shared.speak("Help")
         }
     }

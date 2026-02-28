@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @StateObject private var settingsManager = SettingsManager.shared
+    @ObservedObject private var navigationState = NavigationState.shared
     @State private var showingCancelAlert = false
     @State private var isTransitioning = false
 
@@ -57,6 +58,10 @@ struct HomeView: View {
         .onAppear {
             if settingsManager.shouldShowTutorial(for: "home") {
                 // Tutorial handled via TutorialManager
+            }
+            // Reset flag in case home was entered in a non-idle state (flag would not be reset by IdleStateView)
+            if viewModel.state != .idle {
+                navigationState.didNavigateToHome = false
             }
         }
         .onChange(of: viewModel.state) { _ in
