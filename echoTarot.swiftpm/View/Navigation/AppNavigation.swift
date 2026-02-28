@@ -13,6 +13,7 @@ struct AppNavigation: View {
             Image("background")
                 .resizable()
                 .ignoresSafeArea()
+                .accessibilityHidden(true)
 
             // Main content based on current screen
             Group {
@@ -90,6 +91,7 @@ struct TutorialSheet: View {
         NavigationStack {
             ZStack {
                 Color.black.ignoresSafeArea()
+                    .accessibilityHidden(true)
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 24) {
