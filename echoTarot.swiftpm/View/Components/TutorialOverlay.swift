@@ -7,6 +7,7 @@ struct TutorialOverlay: View {
     @State private var currentIndex = 0
     @State private var isVisible = true
     @ObservedObject private var speechService = SpeechService.shared
+    @Environment(\.accessibilityVoiceOverEnabled) private var isVoiceOverEnabled
 
     var body: some View {
         if isVisible {
@@ -48,10 +49,10 @@ struct TutorialOverlay: View {
                 advanceToNext()
             }
             .onAppear {
-                speakCurrentScript()
+                speakCurrentScript(isInitial: true)
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel("Tutorial: \(scripts[currentIndex])")
+            .accessibilityLabel(scripts[currentIndex])
             .accessibilityHint("Tap to move to the next step")
             .accessibilityAction(.default) {
                 advanceToNext()
@@ -59,13 +60,26 @@ struct TutorialOverlay: View {
         }
     }
 
-    private func speakCurrentScript() {
-        SpeechService.shared.speak(scripts[currentIndex])
+    private func speakCurrentScript(isInitial: Bool = false) {
+        if isVoiceOverEnabled {
+            if isInitial {
+                // 첫 등장 시: VoiceOver가 accessibilityLabel을 자동으로 읽으므로
+                // screenChanged 신호만 보내 포커스를 이동시킴 (이중 재생 방지)
+                UIAccessibility.post(notification: .screenChanged, argument: nil)
+            } else {
+                // 단계 전환 시: 뷰가 그대로이므로 명시적으로 announcement 전송
+                UIAccessibility.post(notification: .announcement, argument: scripts[currentIndex])
+            }
+        } else {
+            SpeechService.shared.speak(scripts[currentIndex])
+        }
     }
 
     private func advanceToNext() {
         HapticService.shared.tap()
-        SpeechService.shared.stop()
+        if !isVoiceOverEnabled {
+            SpeechService.shared.stop()
+        }
 
         if currentIndex < scripts.count - 1 {
             currentIndex += 1

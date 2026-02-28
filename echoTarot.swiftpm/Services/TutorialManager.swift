@@ -22,10 +22,6 @@ final class TutorialManager: ObservableObject {
         currentScripts = TutorialScripts.scripts(for: screen)
         isShowingTutorial = true
 
-        if let firstScript = currentScripts.first {
-            SpeechService.shared.speak(firstScript)
-        }
-
         return true
     }
 
@@ -63,10 +59,6 @@ final class TutorialManager: ObservableObject {
             currentScreen = "welcome"
             currentScripts = TutorialScripts.welcomeScripts
             isShowingTutorial = true
-
-            if let firstScript = currentScripts.first {
-                SpeechService.shared.speak(firstScript)
-            }
         }
     }
 }

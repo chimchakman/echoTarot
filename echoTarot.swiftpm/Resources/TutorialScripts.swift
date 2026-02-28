@@ -5,10 +5,9 @@ struct TutorialScripts {
     static let welcomeScripts: [String] = [
         "Welcome to Echo Tarot.",
         "This app is a tarot diary designed for visually impaired users.",
-        "Tap anywhere on the screen to activate the main function.",
+        "You can ask questions, draw tarot cards, and record your readings.",
+        "The Voice guide will help you interpret your cards.",
         "Swipe left or right to navigate between screens.",
-        "Swipe up to confirm, or swipe down to cancel.",
-        "Pinch in to open Settings, or pinch out to open Help.",
         "You're ready to begin. Tap the screen to start your first reading."
     ]
 
@@ -17,7 +16,7 @@ struct TutorialScripts {
         "Tap the screen to start a tarot reading.",
         "You can record your question, draw cards, and then record your reading.",
         "Tap the spread button to choose between One Card and Three Card spreads.",
-        "Swipe left to go to the Logs screen."
+        "Swipe right to go to the Logs screen, and Swipe left to go to the Settings screen."
     ]
 
     static let logsScripts: [String] = [
@@ -25,7 +24,7 @@ struct TutorialScripts {
         "Here you can review your previously saved tarot readings.",
         "Tap any entry to see its details.",
         "Use the filter button in the top right to sort or filter your readings.",
-        "Swipe left to go to the Settings screen."
+        "Swipe left to go to the Home screen."
     ]
 
     static let settingsScripts: [String] = [
