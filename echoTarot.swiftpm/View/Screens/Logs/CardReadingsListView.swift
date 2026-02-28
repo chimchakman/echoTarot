@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct CardReadingsListView: View {
     let card: TarotCard
@@ -305,8 +304,13 @@ struct CardReadingsListView: View {
                 TextField(isUpright ? "Enter upright keyword" : "Enter reversed keyword", text: $newKeywordText)
                     .textFieldStyle(.roundedBorder)
                     .padding()
+                    .accessibilityLabel("Keyword")
+                    .accessibilityValue(newKeywordText)
                     .onSubmit {
                         submitNewKeyword(isUpright: isUpright)
+                    }
+                    .onChange(of: newKeywordText) { newValue in
+                        if newValue.count > 20 { newKeywordText = String(newValue.prefix(20)) }
                     }
 
                 Spacer()

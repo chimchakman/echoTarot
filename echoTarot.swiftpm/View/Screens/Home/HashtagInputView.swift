@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct HashtagInputView: View {
     @ObservedObject var viewModel: HomeViewModel
@@ -8,6 +7,8 @@ struct HashtagInputView: View {
     @State private var showingNewTagInput = false
     @State private var newTagText = ""
     @AccessibilityFocusState private var isTitleFocused: Bool
+    @FocusState private var isNewTagFieldFocused: Bool
+    @AccessibilityFocusState private var isNewTagFieldAccessibilityFocused: Bool
 
     var body: some View {
         VStack(spacing: 24) {
@@ -43,8 +44,14 @@ struct HashtagInputView: View {
                     Button(action: {
                         showingNewTagInput.toggle()
                         HapticService.shared.tap()
-                        if showingNewTagInput && !UIAccessibility.isVoiceOverRunning {
-                            SpeechService.shared.speak("New tag input field opened")
+                        if showingNewTagInput {
+                            if !UIAccessibility.isVoiceOverRunning {
+                                SpeechService.shared.speak("New tag input field opened")
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.shortDelay) {
+                                isNewTagFieldFocused = true
+                                isNewTagFieldAccessibilityFocused = true
+                            }
                         }
                     }) {
                         HStack {
@@ -66,7 +73,14 @@ struct HashtagInputView: View {
                         HStack {
                             TextField("Enter tag", text: $newTagText)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .accessibilityLabel("New tag input field")
+                                .focused($isNewTagFieldFocused)
+                                .accessibilityFocused($isNewTagFieldAccessibilityFocused)
+                                .accessibilityLabel("Tag")
+                                .accessibilityValue(newTagText)
+                                .onSubmit { addNewTag() }
+                                .onChange(of: newTagText) { newValue in
+                                    if newValue.count > 20 { newTagText = String(newValue.prefix(20)) }
+                                }
 
                             Button(action: addNewTag) {
                                 Image(systemName: "checkmark.circle.fill")

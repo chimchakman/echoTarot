@@ -114,6 +114,8 @@ final class HomeViewModel: ObservableObject {
         HapticService.shared.tap()
         if !UIAccessibility.isVoiceOverRunning {
             SpeechService.shared.speak("Please record your reading. Tap to start recording.")
+        } else {
+            SpeechService.shared.announceAfterDelay("Record your reading. Tap the button to start.", delay: SpeechService.mediumDelay)
         }
         state = .readingRecording
     }
@@ -160,12 +162,16 @@ final class HomeViewModel: ObservableObject {
             HapticService.shared.success()
             if !UIAccessibility.isVoiceOverRunning {
                 SpeechService.shared.speak("Reading saved.")
+            } else {
+                SpeechService.shared.announceAfterDelay("Reading saved.", delay: SpeechService.mediumDelay)
             }
             state = .complete
         } catch {
             HapticService.shared.error()
             if !UIAccessibility.isVoiceOverRunning {
                 SpeechService.shared.speak("Failed to save. Please try again.")
+            } else {
+                SpeechService.shared.announceAfterDelay("Failed to save. Please try again.", delay: SpeechService.mediumDelay)
             }
         }
     }

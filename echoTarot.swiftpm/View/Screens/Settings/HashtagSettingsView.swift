@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct HashtagSettingsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -104,7 +103,17 @@ struct HashtagSettingsView: View {
 
                 TextField("New tag name", text: $renameText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .accessibilityLabel("New tag name input field")
+                    .accessibilityLabel("Tag name")
+                    .accessibilityValue(renameText)
+                    .onSubmit {
+                        if !renameText.trimmingCharacters(in: .whitespaces).isEmpty {
+                            performRename(from: selectedHashtag, to: renameText)
+                            showingRenameSheet = false
+                        }
+                    }
+                    .onChange(of: renameText) { newValue in
+                        if newValue.count > 20 { renameText = String(newValue.prefix(20)) }
+                    }
 
                 Spacer()
             }

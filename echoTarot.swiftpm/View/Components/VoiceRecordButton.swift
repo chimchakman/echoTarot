@@ -44,7 +44,7 @@ struct VoiceRecordButton: View {
             toggleRecording()
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(isRecording ? "Recording, \(formatDuration(audioManager.recordingDuration))" : "Record button")
+        .accessibilityLabel(isRecording ? "Recording, \(formatDuration(audioManager.recordingDuration))" : "Record")
         .accessibilityHint(isRecording ? "Tap to stop recording" : "Tap to start recording")
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(.default) {

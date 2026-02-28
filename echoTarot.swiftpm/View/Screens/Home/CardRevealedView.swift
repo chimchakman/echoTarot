@@ -4,6 +4,7 @@ import UIKit
 struct CardRevealedView: View {
     @ObservedObject var viewModel: HomeViewModel
     @State private var currentCardIndex = 0
+    @AccessibilityFocusState private var isRecordButtonFocused: Bool
 
     var body: some View {
         VStack(spacing: 16) {
@@ -27,8 +28,67 @@ struct CardRevealedView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(maxHeight: 500)
             .accessibilityElement(children: .contain)
-            .accessibilityLabel("Card carousel. Swipe left or right to navigate between cards.")
 
+            // Navigation buttons (for 3-card spread)
+            if viewModel.drawnCards.count > 1 {
+                HStack(spacing: 24) {
+                    // Previous button
+                    Button(action: {
+                        withAnimation {
+                            currentCardIndex = max(0, currentCardIndex - 1)
+                        }
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "chevron.left")
+                                .font(.title2)
+                            Text("Previous Card")
+                                .font(.body)
+                                .fontWeight(.medium)
+                        }
+                        .foregroundColor(.white)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(currentCardIndex == 0 ? Color.gray.opacity(0.3) : Color.indigo.opacity(0.8))
+                        )
+                    }
+                    .disabled(currentCardIndex == 0)
+                    .accessibilityLabel("Previous card")
+                    .accessibilityHint("Navigate to the previous card in the spread")
+
+                    Spacer()
+
+                    // Next button
+                    Button(action: {
+                        withAnimation {
+                            currentCardIndex = min(viewModel.drawnCards.count - 1, currentCardIndex + 1)
+                        }
+                    }) {
+                        HStack(spacing: 8) {
+                            Text("Next Card")
+                                .font(.body)
+                                .fontWeight(.medium)
+                            Image(systemName: "chevron.right")
+                                .font(.title2)
+                        }
+                        .foregroundColor(.white)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 16)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(currentCardIndex == viewModel.drawnCards.count - 1 ? Color.gray.opacity(0.3) : Color.indigo.opacity(0.8))
+                        )
+                    }
+                    .disabled(currentCardIndex == viewModel.drawnCards.count - 1)
+                    .accessibilityLabel("Next card")
+                    .accessibilityHint("Navigate to the next card in the spread")
+                }
+                .padding(.horizontal)
+                .frame(minHeight: 44)
+            }
+
+            // Page indicator dots
             if viewModel.drawnCards.count > 1 {
                 HStack(spacing: 8) {
                     ForEach(0..<viewModel.drawnCards.count, id: \.self) { index in
@@ -58,6 +118,7 @@ struct CardRevealedView: View {
             .padding(.horizontal)
             .accessibilityLabel("Record reading")
             .accessibilityHint("Tap to start recording your reading")
+            .accessibilityFocused($isRecordButtonFocused)
 
             Button(action: {
                 viewModel.skipReadingRecording()
@@ -72,11 +133,53 @@ struct CardRevealedView: View {
         .padding()
         .onAppear {
             if UIAccessibility.isVoiceOverRunning {
-                // Announce cards drawn, then let user explore
                 let cardCount = viewModel.drawnCards.count
-                let announcement = "\(cardCount) card\(cardCount == 1 ? "" : "s") drawn. Swipe to explore cards, then tap Record Reading to continue."
-                SpeechService.shared.announceAfterDelay(announcement, delay: SpeechService.mediumDelay)
+                let intro = "\(cardCount) card\(cardCount == 1 ? "" : "s") drawn."
+
+                // Build the chain: announce intro, then each card in sequence, then focus Record button
+                SpeechService.shared.announceAfterDelay(intro, delay: SpeechService.mediumDelay) {
+                    announceCardsSequentially(startingAt: 0) {
+                        // All cards announced — move focus to Record Reading button
+                        DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.shortDelay) {
+                            isRecordButtonFocused = true
+                        }
+                    }
+                }
             }
         }
+        .onChange(of: currentCardIndex) { newIndex in
+            if UIAccessibility.isVoiceOverRunning {
+                let announcement = cardAnnouncementText(for: newIndex)
+                UIAccessibility.post(notification: .announcement, argument: announcement)
+            }
+        }
+    }
+
+    // Helper function to announce cards sequentially
+    private func announceCardsSequentially(startingAt index: Int, completion: @escaping () -> Void) {
+        guard index < viewModel.drawnCards.count else {
+            completion()
+            return
+        }
+        let announcement = cardAnnouncementText(for: index)
+        SpeechService.shared.announceAfterDelay(announcement, delay: 0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                announceCardsSequentially(startingAt: index + 1, completion: completion)
+            }
+        }
+    }
+
+    // Helper function to generate card announcement text
+    private func cardAnnouncementText(for index: Int) -> String {
+        guard index < viewModel.drawnCards.count else { return "" }
+
+        let card = viewModel.drawnCards[index]
+        let isReversed = viewModel.cardReversals[index]
+        let direction = isReversed ? "Reversed" : "Upright"
+        let meaning = SettingsManager.shared.effectiveMeaning(for: card, isReversed: isReversed)
+        let cardNumber = index + 1
+        let totalCards = viewModel.drawnCards.count
+
+        return "Card \(cardNumber) of \(totalCards): \(card.name), \(direction). \(meaning)"
     }
 }
