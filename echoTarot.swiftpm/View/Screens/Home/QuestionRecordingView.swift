@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct QuestionRecordingView: View {
     @ObservedObject var viewModel: HomeViewModel
@@ -25,7 +26,9 @@ struct QuestionRecordingView: View {
             Button(action: {
                 viewModel.questionAudioURL = nil
                 HapticService.shared.tap()
-                SpeechService.shared.speak("Skipping question recording")
+                if !UIAccessibility.isVoiceOverRunning {
+                    SpeechService.shared.speak("Skipping question recording")
+                }
                 viewModel.state = .hashtagInput
             }) {
                 Text("Skip")

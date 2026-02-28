@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import UIKit
 
 @MainActor
 final class SpeechService: NSObject, ObservableObject {
@@ -10,12 +11,32 @@ final class SpeechService: NSObject, ObservableObject {
     private let synthesizer = AVSpeechSynthesizer()
     private var completionHandler: (() -> Void)?
 
+    var isVoiceOverRunning: Bool {
+        UIAccessibility.isVoiceOverRunning
+    }
+
     override private init() {
         super.init()
         synthesizer.delegate = self
     }
 
     func speak(_ text: String, completion: (() -> Void)? = nil) {
+        if isVoiceOverRunning {
+            speakViaVoiceOver(text, completion: completion)
+        } else {
+            speakViaSynthesizer(text, completion: completion)
+        }
+    }
+
+    private func speakViaVoiceOver(_ text: String, completion: (() -> Void)? = nil) {
+        UIAccessibility.post(notification: .announcement, argument: text)
+        let estimatedDuration = Double(text.count) * 0.05 + 0.5
+        DispatchQueue.main.asyncAfter(deadline: .now() + estimatedDuration) {
+            completion?()
+        }
+    }
+
+    private func speakViaSynthesizer(_ text: String, completion: (() -> Void)? = nil) {
         if synthesizer.isSpeaking {
             synthesizer.stopSpeaking(at: .immediate)
         }
@@ -51,6 +72,18 @@ final class SpeechService: NSObject, ObservableObject {
         }
 
         speakNext()
+    }
+
+    func speakMinimal(_ text: String) {
+        if !isVoiceOverRunning {
+            speak(text)
+        }
+    }
+
+    /// Always speaks via AVSpeechSynthesizer, regardless of VoiceOver state.
+    /// Use this when the app controls audio exclusively (e.g. tutorial overlay).
+    func speakAlways(_ text: String) {
+        speakViaSynthesizer(text)
     }
 
     func stop() {

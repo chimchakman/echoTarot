@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 enum LogsSortOption: String, CaseIterable {
     case dateDescending = "Newest First"
@@ -59,17 +60,21 @@ final class LogsViewModel: ObservableObject {
     func setSortOption(_ option: LogsSortOption) {
         sortOption = option
         HapticService.shared.selection()
-        SpeechService.shared.speak("Sorted by \(option.rawValue)")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Sorted by \(option.rawValue)")
+        }
         applyFiltersAndSort()
     }
 
     func filterByHashtag(_ hashtag: String?) {
         selectedHashtag = hashtag
         HapticService.shared.selection()
-        if let tag = hashtag {
-            SpeechService.shared.speak("Filter applied: \(tag)")
-        } else {
-            SpeechService.shared.speak("Filter cleared")
+        if !UIAccessibility.isVoiceOverRunning {
+            if let tag = hashtag {
+                SpeechService.shared.speak("Filter applied: \(tag)")
+            } else {
+                SpeechService.shared.speak("Filter cleared")
+            }
         }
         applyFiltersAndSort()
     }
@@ -77,10 +82,12 @@ final class LogsViewModel: ObservableObject {
     func filterByCard(_ cardId: String?) {
         selectedCardId = cardId
         HapticService.shared.selection()
-        if let id = cardId, let card = allCards.first(where: { $0.id == id }) {
-            SpeechService.shared.speak("Filter applied: \(card.name)")
-        } else {
-            SpeechService.shared.speak("Filter cleared")
+        if !UIAccessibility.isVoiceOverRunning {
+            if let id = cardId, let card = allCards.first(where: { $0.id == id }) {
+                SpeechService.shared.speak("Filter applied: \(card.name)")
+            } else {
+                SpeechService.shared.speak("Filter cleared")
+            }
         }
         applyFiltersAndSort()
     }
@@ -89,7 +96,9 @@ final class LogsViewModel: ObservableObject {
         selectedHashtag = nil
         selectedCardId = nil
         HapticService.shared.tap()
-        SpeechService.shared.speak("All filters cleared")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("All filters cleared")
+        }
         applyFiltersAndSort()
     }
 
@@ -104,11 +113,15 @@ final class LogsViewModel: ObservableObject {
 
             try PersistenceManager.shared.deleteReading(reading)
             HapticService.shared.success()
-            SpeechService.shared.speak("Reading deleted")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Reading deleted")
+            }
             loadReadings()
         } catch {
             HapticService.shared.error()
-            SpeechService.shared.speak("Failed to delete reading")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Failed to delete reading")
+            }
         }
     }
 

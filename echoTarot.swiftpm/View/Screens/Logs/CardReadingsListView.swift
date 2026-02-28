@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct CardReadingsListView: View {
     let card: TarotCard
@@ -94,11 +95,13 @@ struct CardReadingsListView: View {
                 addKeywordSheet(isUpright: false)
             }
             .onAppear {
-                let count = readings.count
-                if count > 0 {
-                    SpeechService.shared.speak("\(count) reading\(count == 1 ? "" : "s") containing \(card.name)")
-                } else {
-                    SpeechService.shared.speak("No readings containing \(card.name)")
+                if !UIAccessibility.isVoiceOverRunning {
+                    let count = readings.count
+                    if count > 0 {
+                        SpeechService.shared.speak("\(count) reading\(count == 1 ? "" : "s") containing \(card.name)")
+                    } else {
+                        SpeechService.shared.speak("No readings containing \(card.name)")
+                    }
                 }
                 HapticService.shared.tap()
             }

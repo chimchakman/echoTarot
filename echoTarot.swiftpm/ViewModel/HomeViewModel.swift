@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 enum HomeState: Equatable {
     case idle
@@ -28,14 +29,18 @@ final class HomeViewModel: ObservableObject {
 
     func startReading() {
         HapticService.shared.tap()
-        SpeechService.shared.speak("Please record your question. Tap to start recording.")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Please record your question. Tap to start recording.")
+        }
         state = .questionRecording
     }
 
     func completeQuestionRecording(audioURL: URL) {
         questionAudioURL = audioURL
         HapticService.shared.success()
-        SpeechService.shared.speak("Question recorded. Please select tags.")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Question recorded. Please select tags.")
+        }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             self?.state = .hashtagInput
@@ -63,9 +68,11 @@ final class HomeViewModel: ObservableObject {
                 self.drawnCards.append(card)
                 self.cardReversals.append(isReversed)
 
-                // Speak card info
-                let reversedText = isReversed ? "Reversed" : ""
-                SpeechService.shared.speak("Card \(i + 1): \(card.name) \(reversedText)")
+                // Only speak card info if NOT VoiceOver
+                if !UIAccessibility.isVoiceOverRunning {
+                    let reversedText = isReversed ? "Reversed" : ""
+                    SpeechService.shared.speak("Card \(i + 1): \(card.name) \(reversedText)")
+                }
 
                 // Check if all cards are drawn
                 if self.drawnCards.count == self.selectedSpread.cardCount {
@@ -82,22 +89,26 @@ final class HomeViewModel: ObservableObject {
         state = .cardRevealed
         HapticService.shared.cardRevealed()
 
-        // Speak all card meanings
-        var speechTexts: [String] = []
-        for (index, card) in drawnCards.enumerated() {
-            let isReversed = cardReversals[index]
-            let meaning = SettingsManager.shared.effectiveMeaning(for: card, isReversed: isReversed)
-            let directionText = isReversed ? "Reversed" : "Upright"
-            speechTexts.append("Card \(index + 1): \(card.name), \(directionText). \(meaning)")
+        // DO NOT auto-speak card meanings when VoiceOver is active
+        // VoiceOver users will swipe through cards and hear accessibilityLabel
+        if !UIAccessibility.isVoiceOverRunning {
+            var speechTexts: [String] = []
+            for (index, card) in drawnCards.enumerated() {
+                let isReversed = cardReversals[index]
+                let meaning = SettingsManager.shared.effectiveMeaning(for: card, isReversed: isReversed)
+                let directionText = isReversed ? "Reversed" : "Upright"
+                speechTexts.append("Card \(index + 1): \(card.name), \(directionText). \(meaning)")
+            }
+            SpeechService.shared.speakWithPause(speechTexts, pauseDuration: 1.0)
         }
-
-        SpeechService.shared.speakWithPause(speechTexts, pauseDuration: 1.0)
     }
 
     func startReadingRecording() {
         SpeechService.shared.stop()
         HapticService.shared.tap()
-        SpeechService.shared.speak("Please record your reading. Tap to start recording.")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Please record your reading. Tap to start recording.")
+        }
         state = .readingRecording
     }
 
@@ -109,7 +120,9 @@ final class HomeViewModel: ObservableObject {
     func completeHashtagInput(selectedHashtags: [String]) {
         hashtags = selectedHashtags
         HapticService.shared.success()
-        SpeechService.shared.speak("Tags selected. Drawing cards now.")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Tags selected. Drawing cards now.")
+        }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
             self?.drawCards()
@@ -119,7 +132,9 @@ final class HomeViewModel: ObservableObject {
     func skipHashtagInput() {
         hashtags = []
         HapticService.shared.tap()
-        SpeechService.shared.speak("Skipping tag selection. Drawing cards now.")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Skipping tag selection. Drawing cards now.")
+        }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             self?.drawCards()
@@ -137,11 +152,15 @@ final class HomeViewModel: ObservableObject {
                 hashtags: hashtags
             )
             HapticService.shared.success()
-            SpeechService.shared.speak("Reading saved.")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Reading saved.")
+            }
             state = .complete
         } catch {
             HapticService.shared.error()
-            SpeechService.shared.speak("Failed to save. Please try again.")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Failed to save. Please try again.")
+            }
         }
     }
 
@@ -170,6 +189,8 @@ final class HomeViewModel: ObservableObject {
     func changeSpread() {
         selectedSpread = selectedSpread == .oneCard ? .threeCard : .oneCard
         HapticService.shared.selection()
-        SpeechService.shared.speak("\(selectedSpread.name) selected")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("\(selectedSpread.name) selected")
+        }
     }
 }

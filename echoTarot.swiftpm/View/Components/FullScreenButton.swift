@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct FullScreenButton: View {
     let title: String
@@ -14,7 +15,9 @@ struct FullScreenButton: View {
     var body: some View {
         Button(action: {
             HapticService.shared.tap()
-            SpeechService.shared.speak(title)
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak(title)
+            }
             action()
         }) {
             VStack(spacing: 16) {

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct HashtagInputView: View {
     @ObservedObject var viewModel: HomeViewModel
@@ -40,7 +41,7 @@ struct HashtagInputView: View {
                     Button(action: {
                         showingNewTagInput.toggle()
                         HapticService.shared.tap()
-                        if showingNewTagInput {
+                        if showingNewTagInput && !UIAccessibility.isVoiceOverRunning {
                             SpeechService.shared.speak("New tag input field opened")
                         }
                     }) {
@@ -87,7 +88,9 @@ struct HashtagInputView: View {
             HStack(spacing: 20) {
                 Button(action: {
                     HapticService.shared.tap()
-                    SpeechService.shared.speak("Skipping tag selection")
+                    if !UIAccessibility.isVoiceOverRunning {
+                        SpeechService.shared.speak("Skipping tag selection")
+                    }
                     viewModel.skipHashtagInput()
                 }) {
                     Text("Skip")
@@ -101,8 +104,10 @@ struct HashtagInputView: View {
 
                 Button(action: {
                     HapticService.shared.success()
-                    let count = selectedHashtags.count
-                    SpeechService.shared.speak("\(count) tag\(count == 1 ? "" : "s") selected")
+                    if !UIAccessibility.isVoiceOverRunning {
+                        let count = selectedHashtags.count
+                        SpeechService.shared.speak("\(count) tag\(count == 1 ? "" : "s") selected")
+                    }
                     viewModel.completeHashtagInput(selectedHashtags: Array(selectedHashtags))
                 }) {
                     Text("Done")
@@ -122,7 +127,9 @@ struct HashtagInputView: View {
         .padding()
         .onAppear {
             loadExistingHashtags()
-            SpeechService.shared.speak("Tag selection screen. You can select or add tags.")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Tag selection screen. You can select or add tags.")
+            }
         }
     }
 
@@ -155,10 +162,14 @@ struct HashtagInputView: View {
         HapticService.shared.selection()
         if selectedHashtags.contains(hashtag) {
             selectedHashtags.remove(hashtag)
-            SpeechService.shared.speak("\(hashtag) deselected")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("\(hashtag) deselected")
+            }
         } else {
             selectedHashtags.insert(hashtag)
-            SpeechService.shared.speak("\(hashtag) selected")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("\(hashtag) selected")
+            }
         }
     }
 
@@ -169,7 +180,9 @@ struct HashtagInputView: View {
         // Check for duplicates
         if existingHashtags.contains(trimmed) {
             HapticService.shared.warning()
-            SpeechService.shared.speak("This tag already exists")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("This tag already exists")
+            }
             return
         }
 
@@ -181,7 +194,9 @@ struct HashtagInputView: View {
         selectedHashtags.insert(trimmed)
 
         HapticService.shared.success()
-        SpeechService.shared.speak("\(trimmed) tag added and selected")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("\(trimmed) tag added and selected")
+        }
 
         // Reset input
         newTagText = ""

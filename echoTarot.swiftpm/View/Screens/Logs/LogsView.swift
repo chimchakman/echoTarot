@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 enum LogsTab {
     case readings
@@ -41,7 +42,9 @@ struct LogsView: View {
                     action: {
                         selectedTab = .readings
                         HapticService.shared.selection()
-                        SpeechService.shared.speak("Reading List")
+                        if !UIAccessibility.isVoiceOverRunning {
+                            SpeechService.shared.speak("Reading List")
+                        }
                     }
                 )
 
@@ -51,7 +54,9 @@ struct LogsView: View {
                     action: {
                         selectedTab = .dictionary
                         HapticService.shared.selection()
-                        SpeechService.shared.speak("Card Dictionary")
+                        if !UIAccessibility.isVoiceOverRunning {
+                            SpeechService.shared.speak("Card Dictionary")
+                        }
                     }
                 )
             }

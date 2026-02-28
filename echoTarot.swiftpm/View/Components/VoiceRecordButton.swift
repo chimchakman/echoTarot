@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import UIKit
 
 struct VoiceRecordButton: View {
     @ObservedObject var audioManager = AudioFileManager.shared
@@ -74,16 +75,22 @@ struct VoiceRecordButton: View {
                             self.beginRecording()
                         } else {
                             HapticService.shared.error()
-                            SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                            if !UIAccessibility.isVoiceOverRunning {
+                                SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                            }
                         }
                     }
                 }
             case .denied:
                 HapticService.shared.error()
-                SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                if !UIAccessibility.isVoiceOverRunning {
+                    SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                }
             @unknown default:
                 HapticService.shared.error()
-                SpeechService.shared.speak("Unable to access microphone.")
+                if !UIAccessibility.isVoiceOverRunning {
+                    SpeechService.shared.speak("Unable to access microphone.")
+                }
             }
         } else {
             let session = AVAudioSession.sharedInstance()
@@ -98,16 +105,22 @@ struct VoiceRecordButton: View {
                             self.beginRecording()
                         } else {
                             HapticService.shared.error()
-                            SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                            if !UIAccessibility.isVoiceOverRunning {
+                                SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                            }
                         }
                     }
                 }
             case .denied:
                 HapticService.shared.error()
-                SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                if !UIAccessibility.isVoiceOverRunning {
+                    SpeechService.shared.speak("Microphone access denied. Please enable microphone access in Settings.")
+                }
             @unknown default:
                 HapticService.shared.error()
-                SpeechService.shared.speak("Unable to access microphone.")
+                if !UIAccessibility.isVoiceOverRunning {
+                    SpeechService.shared.speak("Unable to access microphone.")
+                }
             }
         }
         #endif
@@ -116,7 +129,11 @@ struct VoiceRecordButton: View {
     private func beginRecording() {
         #if os(iOS)
         HapticService.shared.recordingStarted()
-        SpeechService.shared.speak("Starting recording")
+        if UIAccessibility.isVoiceOverRunning {
+            UIAccessibility.post(notification: .announcement, argument: "Recording")
+        } else {
+            SpeechService.shared.speak("Starting recording")
+        }
         #endif
 
         let url = audioManager.generateFilePath(for: recordingType)
@@ -128,7 +145,9 @@ struct VoiceRecordButton: View {
         } catch {
             #if os(iOS)
             HapticService.shared.error()
-            SpeechService.shared.speak("Unable to start recording")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Unable to start recording")
+            }
             #endif
         }
     }
@@ -140,7 +159,11 @@ struct VoiceRecordButton: View {
 
         if let url = audioManager.stopRecording() {
             #if os(iOS)
-            SpeechService.shared.speak("Recording complete")
+            if UIAccessibility.isVoiceOverRunning {
+                UIAccessibility.post(notification: .announcement, argument: "Saved")
+            } else {
+                SpeechService.shared.speak("Recording complete")
+            }
             #endif
             isRecording = false
             onRecordingComplete(url)

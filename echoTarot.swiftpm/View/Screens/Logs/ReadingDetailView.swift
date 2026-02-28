@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ReadingDetailView: View {
     let reading: any ReadingProtocol
@@ -125,7 +126,9 @@ struct ReadingDetailView: View {
                 audioManager.stopPlaying()
             } else {
                 try? audioManager.playAudio(from: url)
-                SpeechService.shared.speak("Playing \(title)")
+                if !UIAccessibility.isVoiceOverRunning {
+                    SpeechService.shared.speak("Playing \(title)")
+                }
             }
         }) {
             HStack {

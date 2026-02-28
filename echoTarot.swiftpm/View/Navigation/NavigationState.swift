@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 enum AppScreen: String, CaseIterable, Sendable {
     case logs = "Logs"
@@ -38,7 +39,13 @@ final class NavigationState: ObservableObject {
         guard screen != currentScreen else { return }
 
         HapticService.shared.navigate()
-        SpeechService.shared.speak("\(screen.rawValue) screen")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("\(screen.rawValue) screen")
+        } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                UIAccessibility.post(notification: .screenChanged, argument: nil)
+            }
+        }
 
         withAnimation(.easeInOut(duration: 0.3)) {
             currentScreen = screen
@@ -64,12 +71,16 @@ final class NavigationState: ObservableObject {
     func openSettings() {
         HapticService.shared.pinch()
         showSettings = true
-        SpeechService.shared.speak("Opening Settings")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Opening Settings")
+        }
     }
 
     func openTutorial() {
         HapticService.shared.pinch()
         showTutorial = true
-        SpeechService.shared.speak("Help")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Help")
+        }
     }
 }

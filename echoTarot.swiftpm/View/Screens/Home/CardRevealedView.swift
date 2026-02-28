@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct CardRevealedView: View {
     @ObservedObject var viewModel: HomeViewModel
@@ -11,6 +12,7 @@ struct CardRevealedView: View {
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
+                .accessibilityAddTraits(.isHeader)
 
             // Card display (scrollable for multiple cards)
             TabView(selection: $currentCardIndex) {
@@ -24,6 +26,8 @@ struct CardRevealedView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .frame(maxHeight: 500)
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Card carousel. Swipe left or right to navigate between cards.")
 
             if viewModel.drawnCards.count > 1 {
                 HStack(spacing: 8) {
@@ -66,5 +70,12 @@ struct CardRevealedView: View {
             .accessibilityLabel("Save without recording")
         }
         .padding()
+        .onAppear {
+            if UIAccessibility.isVoiceOverRunning {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    UIAccessibility.post(notification: .screenChanged, argument: nil)
+                }
+            }
+        }
     }
 }

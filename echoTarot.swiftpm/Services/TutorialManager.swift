@@ -35,7 +35,7 @@ final class TutorialManager: ObservableObject {
         currentScripts = []
 
         HapticService.shared.success()
-        SpeechService.shared.speak("Tutorial complete.")
+        SpeechService.shared.speakAlways("Tutorial complete.")
     }
 
     func skipTutorial() {

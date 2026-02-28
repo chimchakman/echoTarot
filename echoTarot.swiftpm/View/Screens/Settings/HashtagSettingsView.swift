@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct HashtagSettingsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -142,7 +143,9 @@ struct HashtagSettingsView: View {
         do {
             try PersistenceManager.shared.renameHashtag(from: oldName, to: trimmed)
             HapticService.shared.success()
-            SpeechService.shared.speak("Renamed to \(trimmed)")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Renamed to \(trimmed)")
+            }
             if #available(iOS 17.0, *) {
                 AccessibilityNotification.Announcement("Renamed to \(trimmed)").post()
             }
@@ -150,7 +153,9 @@ struct HashtagSettingsView: View {
             // Rollback master list on failure
             HashtagManager.shared.rename(from: trimmed, to: oldName)
             HapticService.shared.error()
-            SpeechService.shared.speak("Failed to rename")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Failed to rename")
+            }
         }
     }
 
@@ -162,7 +167,9 @@ struct HashtagSettingsView: View {
         do {
             try PersistenceManager.shared.deleteHashtag(hashtag)
             HapticService.shared.success()
-            SpeechService.shared.speak("Tag deleted")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Tag deleted")
+            }
             if #available(iOS 17.0, *) {
                 AccessibilityNotification.Announcement("Tag deleted").post()
             }
@@ -170,7 +177,9 @@ struct HashtagSettingsView: View {
             // Rollback master list on failure
             HashtagManager.shared.add(hashtag)
             HapticService.shared.error()
-            SpeechService.shared.speak("Failed to delete")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Failed to delete")
+            }
         }
     }
 }

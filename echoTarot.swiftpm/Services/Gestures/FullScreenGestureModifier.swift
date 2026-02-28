@@ -177,14 +177,6 @@ private struct NavigationActionsModifier: ViewModifier {
                     break
                 }
             }
-            .accessibilityActions {
-                if let onSwipeLeft {
-                    Button("Navigate to next screen", action: onSwipeLeft)
-                }
-                if let onSwipeRight {
-                    Button("Navigate to previous screen", action: onSwipeRight)
-                }
-            }
     }
 }
 

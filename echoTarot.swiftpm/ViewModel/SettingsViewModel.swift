@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 @MainActor
 final class SettingsViewModel: ObservableObject {
@@ -36,7 +37,9 @@ final class SettingsViewModel: ObservableObject {
         settingsManager.tutorialEnabled = tutorialEnabled
         HapticService.shared.selection()
         let status = tutorialEnabled ? "on" : "off"
-        SpeechService.shared.speak("Tutorial \(status)")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Tutorial \(status)")
+        }
     }
 
     func toggleHaptic() {
@@ -46,14 +49,18 @@ final class SettingsViewModel: ObservableObject {
             HapticService.shared.success()
         }
         let status = hapticEnabled ? "on" : "off"
-        SpeechService.shared.speak("Haptic feedback \(status)")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Haptic feedback \(status)")
+        }
     }
 
     func setDefaultSpread(_ spread: TarotSpread) {
         defaultSpread = spread
         settingsManager.defaultSpread = spread
         HapticService.shared.selection()
-        SpeechService.shared.speak("Default spread: \(spread.name)")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Default spread: \(spread.name)")
+        }
     }
 
     func resetTutorials() {
@@ -61,7 +68,9 @@ final class SettingsViewModel: ObservableObject {
         settingsManager.settings.logsTutorialShown = false
         settingsManager.settings.settingsTutorialShown = false
         HapticService.shared.success()
-        SpeechService.shared.speak("Tutorials reset")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("Tutorials reset")
+        }
     }
 
     func resetAllSettings() {
@@ -74,6 +83,8 @@ final class SettingsViewModel: ObservableObject {
         defaultSpread = settingsManager.defaultSpread
 
         HapticService.shared.success()
-        SpeechService.shared.speak("All settings reset")
+        if !UIAccessibility.isVoiceOverRunning {
+            SpeechService.shared.speak("All settings reset")
+        }
     }
 }

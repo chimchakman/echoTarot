@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct TarotCardDictionaryView: View {
     @ObservedObject var viewModel: LogsViewModel
@@ -20,7 +21,9 @@ struct TarotCardDictionaryView: View {
             CardReadingsListView(card: card, viewModel: viewModel)
         }
         .onAppear {
-            SpeechService.shared.speak("Tarot Card Dictionary")
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak("Tarot Card Dictionary")
+            }
             HapticService.shared.tap()
         }
     }
@@ -62,7 +65,9 @@ struct TarotCardDictionaryView: View {
     private func cardButton(card: TarotCard) -> some View {
         Button(action: {
             HapticService.shared.tap()
-            SpeechService.shared.speak(card.name)
+            if !UIAccessibility.isVoiceOverRunning {
+                SpeechService.shared.speak(card.name)
+            }
             selectedCard = card
         }) {
             VStack(spacing: 4) {
