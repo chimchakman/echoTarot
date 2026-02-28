@@ -7,6 +7,7 @@ struct HashtagInputView: View {
     @State private var selectedHashtags: Set<String> = []
     @State private var showingNewTagInput = false
     @State private var newTagText = ""
+    @AccessibilityFocusState private var isTitleFocused: Bool
 
     var body: some View {
         VStack(spacing: 24) {
@@ -16,6 +17,7 @@ struct HashtagInputView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.white)
                 .accessibilityLabel("Tag selection screen")
+                .accessibilityFocused($isTitleFocused)
 
             Text("Select a previously used tag or add a new one")
                 .font(.body)
@@ -129,6 +131,10 @@ struct HashtagInputView: View {
             loadExistingHashtags()
             if !UIAccessibility.isVoiceOverRunning {
                 SpeechService.shared.speak("Tag selection screen. You can select or add tags.")
+            } else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.shortDelay) {
+                    isTitleFocused = true
+                }
             }
         }
     }

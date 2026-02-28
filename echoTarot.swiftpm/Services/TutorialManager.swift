@@ -35,7 +35,14 @@ final class TutorialManager: ObservableObject {
         currentScripts = []
 
         HapticService.shared.success()
-        SpeechService.shared.speakAlways("Tutorial complete.")
+        SpeechService.shared.speakAlways("Tutorial complete.") {
+            // Use .announcement (not .screenChanged) to avoid conflict with SwiftUI's automatic
+            // .screenChanged notification fired when the tutorial overlay is removed from the hierarchy.
+            UIAccessibility.post(
+                notification: .announcement,
+                argument: "Home screen. Tap the table button to start today's reading. Swipe left for settings, swipe right for logs."
+            )
+        }
     }
 
     func skipTutorial() {

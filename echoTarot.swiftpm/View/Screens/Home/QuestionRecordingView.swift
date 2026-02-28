@@ -3,6 +3,7 @@ import UIKit
 
 struct QuestionRecordingView: View {
     @ObservedObject var viewModel: HomeViewModel
+    @AccessibilityFocusState private var isRecordButtonFocused: Bool
 
     var body: some View {
         VStack(spacing: 24) {
@@ -20,6 +21,7 @@ struct QuestionRecordingView: View {
             VoiceRecordButton(recordingType: .question) { url in
                 viewModel.completeQuestionRecording(audioURL: url)
             }
+            .accessibilityFocused($isRecordButtonFocused)
 
             Spacer()
             // Skip button
@@ -39,5 +41,11 @@ struct QuestionRecordingView: View {
             .accessibilityLabel("Skip question recording")
         }
         .padding()
+        .onAppear {
+            // Delay longer than SwiftUI transition (0.35s) to avoid race with IdleStateView
+            DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.mediumDelay) {
+                isRecordButtonFocused = true
+            }
+        }
     }
 }

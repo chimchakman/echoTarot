@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ReadingRecordingView: View {
     @ObservedObject var viewModel: HomeViewModel
+    @AccessibilityFocusState private var isRecordButtonFocused: Bool
 
     var body: some View {
         VStack(spacing: 24) {
@@ -36,6 +37,7 @@ struct ReadingRecordingView: View {
             VoiceRecordButton(recordingType: .reading) { url in
                 viewModel.completeReadingRecording(audioURL: url)
             }
+            .accessibilityFocused($isRecordButtonFocused)
 
             Spacer()
 
@@ -50,5 +52,14 @@ struct ReadingRecordingView: View {
             .accessibilityLabel("Skip reading recording")
         }
         .padding()
+        .onAppear {
+            if UIAccessibility.isVoiceOverRunning {
+                // Focus only - VoiceOver will read the button's accessibilityLabel automatically
+                // Do NOT post announcement here - it would overlap with focus reading
+                DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.mediumDelay) {
+                    isRecordButtonFocused = true
+                }
+            }
+        }
     }
 }

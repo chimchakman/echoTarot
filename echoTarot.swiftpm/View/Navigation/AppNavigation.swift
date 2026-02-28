@@ -3,6 +3,9 @@ import SwiftUI
 struct AppNavigation: View {
     @StateObject private var navigationState = NavigationState.shared
     @StateObject private var settingsManager = SettingsManager.shared
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var hasAppearedOnce = false
+    @State private var previousScenePhase: ScenePhase = .active
 
     var body: some View {
         ZStack {
@@ -47,6 +50,33 @@ struct AppNavigation: View {
         )
         .sheet(isPresented: $navigationState.showTutorial) {
             TutorialSheet()
+        }
+        .onAppear {
+            guard !hasAppearedOnce else { return }
+            hasAppearedOnce = true
+
+            // Skip if tutorial is showing (tutorial handles its own completion announcement)
+            guard !TutorialManager.shared.isShowingTutorial else { return }
+
+            // Cold start: announce Home screen intro
+            // Use long delay to let VoiceOver finish any automatic focus announcements
+            SpeechService.shared.announceAfterDelay(
+                "Home. Tap the table button to start today's reading. Swipe left for settings, swipe right for logs.",
+                delay: SpeechService.longDelay
+            )
+        }
+        .onChange(of: scenePhase) { newPhase in
+            // Re-announce current screen when returning from background
+            if newPhase == .active && previousScenePhase == .background && hasAppearedOnce {
+                // Skip if tutorial is showing
+                guard !TutorialManager.shared.isShowingTutorial else { return }
+
+                SpeechService.shared.announceAfterDelay(
+                    navigationState.screenAnnouncement(for: navigationState.currentScreen),
+                    delay: SpeechService.mediumDelay
+                )
+            }
+            previousScenePhase = newPhase
         }
     }
 

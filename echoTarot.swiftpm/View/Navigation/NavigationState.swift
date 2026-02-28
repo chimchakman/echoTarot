@@ -42,13 +42,30 @@ final class NavigationState: ObservableObject {
         if !UIAccessibility.isVoiceOverRunning {
             SpeechService.shared.speak("\(screen.rawValue) screen")
         } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                UIAccessibility.post(notification: .screenChanged, argument: nil)
-            }
+            // Post custom announcement instead of .screenChanged to control exactly what is spoken
+            SpeechService.shared.announceAfterDelay(
+                screenAnnouncement(for: screen),
+                delay: SpeechService.mediumDelay
+            )
         }
 
         withAnimation(.easeInOut(duration: 0.3)) {
             currentScreen = screen
+        }
+    }
+
+    /// Returns the VoiceOver announcement for a given screen
+    /// - Parameter screen: The screen to announce
+    /// - Returns: Announcement string
+    func screenAnnouncement(for screen: AppScreen) -> String {
+        switch screen {
+        case .home:
+            return "Home."
+        case .logs:
+            let count = (try? PersistenceManager.shared.fetchAllReadings().count) ?? 0
+            return "Logs. \(count) readings."
+        case .settings:
+            return "Settings."
         }
     }
 

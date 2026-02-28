@@ -4,12 +4,13 @@ struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     @StateObject private var settingsManager = SettingsManager.shared
     @State private var showingCancelAlert = false
+    @State private var isTransitioning = false
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .idle:
-                IdleStateView(viewModel: viewModel)
+                IdleStateView(viewModel: viewModel, isTransitioning: $isTransitioning)
             case .questionRecording:
                 QuestionRecordingView(viewModel: viewModel)
             case .hashtagInput:
@@ -56,6 +57,14 @@ struct HomeView: View {
         .onAppear {
             if settingsManager.shouldShowTutorial(for: "home") {
                 // Tutorial handled via TutorialManager
+            }
+        }
+        .onChange(of: viewModel.state) { _ in
+            // Signal transition start - prevents old view from setting focus
+            isTransitioning = true
+            // Reset after SwiftUI animation completes (0.35s typical transition duration)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                isTransitioning = false
             }
         }
     }

@@ -72,9 +72,10 @@ struct CardRevealedView: View {
         .padding()
         .onAppear {
             if UIAccessibility.isVoiceOverRunning {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    UIAccessibility.post(notification: .screenChanged, argument: nil)
-                }
+                // Announce cards drawn, then let user explore
+                let cardCount = viewModel.drawnCards.count
+                let announcement = "\(cardCount) card\(cardCount == 1 ? "" : "s") drawn. Swipe to explore cards, then tap Record Reading to continue."
+                SpeechService.shared.announceAfterDelay(announcement, delay: SpeechService.mediumDelay)
             }
         }
     }

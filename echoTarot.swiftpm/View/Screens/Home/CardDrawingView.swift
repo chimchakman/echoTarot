@@ -2,6 +2,7 @@ import SwiftUI
 
 struct CardDrawingView: View {
     @ObservedObject var viewModel: HomeViewModel
+    @AccessibilityFocusState private var isTitleFocused: Bool
 
     var body: some View {
         VStack(spacing: 24) {
@@ -9,6 +10,7 @@ struct CardDrawingView: View {
                 .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(.white)
+                .accessibilityFocused($isTitleFocused)
 
             Text("\(viewModel.selectedSpread.name)")
                 .font(.title3)
@@ -34,6 +36,13 @@ struct CardDrawingView: View {
             }
         }
         .padding()
+        .onAppear {
+            if UIAccessibility.isVoiceOverRunning {
+                DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.shortDelay) {
+                    isTitleFocused = true
+                }
+            }
+        }
     }
 
     @ViewBuilder

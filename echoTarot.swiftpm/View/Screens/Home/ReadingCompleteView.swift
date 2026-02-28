@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ReadingCompleteView: View {
     @ObservedObject var viewModel: HomeViewModel
+    @AccessibilityFocusState private var isHomeButtonFocused: Bool
 
     var body: some View {
         VStack(spacing: 32) {
@@ -40,10 +41,22 @@ struct ReadingCompleteView: View {
             .padding(.bottom, 100)
             .accessibilityLabel("Back to Home")
             .accessibilityHint("Tap to return to the start")
+            .accessibilityFocused($isHomeButtonFocused)
         }
         .padding()
         .onAppear {
             HapticService.shared.success()
+            if UIAccessibility.isVoiceOverRunning {
+                // Step 1: Set focus first
+                DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.shortDelay) {
+                    isHomeButtonFocused = true
+                }
+                // Step 2: Announce AFTER focus has been read (longer delay)
+                SpeechService.shared.announceAfterDelay(
+                    "Reading saved successfully. Tap Back to Home to start a new reading.",
+                    delay: SpeechService.focusThenAnnounceDelay
+                )
+            }
         }
     }
 }

@@ -29,21 +29,27 @@ final class HomeViewModel: ObservableObject {
 
     func startReading() {
         HapticService.shared.tap()
+        state = .questionRecording
         if !UIAccessibility.isVoiceOverRunning {
             SpeechService.shared.speak("Please record your question. Tap to start recording.")
         }
-        state = .questionRecording
+        // VoiceOver users will hear the button label via focus in QuestionRecordingView's onAppear
     }
 
     func completeQuestionRecording(audioURL: URL) {
         questionAudioURL = audioURL
         HapticService.shared.success()
-        if !UIAccessibility.isVoiceOverRunning {
-            SpeechService.shared.speak("Question recorded. Please select tags.")
-        }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.state = .hashtagInput
+        if UIAccessibility.isVoiceOverRunning {
+            // Shorter delay for VoiceOver - view handles focus
+            DispatchQueue.main.asyncAfter(deadline: .now() + SpeechService.mediumDelay) { [weak self] in
+                self?.state = .hashtagInput
+            }
+        } else {
+            SpeechService.shared.speak("Question recorded. Please select tags.")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+                self?.state = .hashtagInput
+            }
         }
     }
 

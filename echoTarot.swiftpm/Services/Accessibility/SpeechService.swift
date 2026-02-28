@@ -15,6 +15,16 @@ final class SpeechService: NSObject, ObservableObject {
         UIAccessibility.isVoiceOverRunning
     }
 
+    // MARK: - Delay Constants for VoiceOver Coordination
+    /// Short delay for minor transitions (focus setting after view render)
+    static let shortDelay: TimeInterval = 0.3
+    /// Medium delay for screen transitions (allows VoiceOver to settle)
+    static let mediumDelay: TimeInterval = 0.5
+    /// Long delay for cold start or complex transitions
+    static let longDelay: TimeInterval = 1.0
+    /// Extra long delay for focus THEN announcement sequencing
+    static let focusThenAnnounceDelay: TimeInterval = 0.8
+
     override private init() {
         super.init()
         synthesizer.delegate = self
@@ -33,6 +43,27 @@ final class SpeechService: NSObject, ObservableObject {
         let estimatedDuration = Double(text.count) * 0.05 + 0.5
         DispatchQueue.main.asyncAfter(deadline: .now() + estimatedDuration) {
             completion?()
+        }
+    }
+
+    /// Announces text via VoiceOver with a delay to avoid overlapping with automatic focus announcements.
+    /// Use this for screen transition announcements where VoiceOver may auto-read focused elements.
+    /// - Parameters:
+    ///   - text: The announcement text
+    ///   - delay: Time to wait before posting announcement (default: mediumDelay)
+    ///   - completion: Optional callback after estimated speech duration
+    func announceAfterDelay(_ text: String, delay: TimeInterval = SpeechService.mediumDelay, completion: (() -> Void)? = nil) {
+        guard UIAccessibility.isVoiceOverRunning else {
+            speak(text, completion: completion)
+            return
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+            UIAccessibility.post(notification: .announcement, argument: text)
+            let estimatedDuration = Double(text.count) * 0.05 + 0.5
+            DispatchQueue.main.asyncAfter(deadline: .now() + estimatedDuration) {
+                completion?()
+            }
         }
     }
 
@@ -82,8 +113,8 @@ final class SpeechService: NSObject, ObservableObject {
 
     /// Always speaks via AVSpeechSynthesizer, regardless of VoiceOver state.
     /// Use this when the app controls audio exclusively (e.g. tutorial overlay).
-    func speakAlways(_ text: String) {
-        speakViaSynthesizer(text)
+    func speakAlways(_ text: String, completion: (() -> Void)? = nil) {
+        speakViaSynthesizer(text, completion: completion)
     }
 
     func stop() {
