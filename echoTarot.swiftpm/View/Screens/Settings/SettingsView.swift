@@ -3,8 +3,8 @@ import SwiftUI
 struct SettingsView: View {
     @StateObject private var viewModel = SettingsViewModel()
     @ObservedObject private var hashtagManager = HashtagManager.shared
-    @State private var showResetAlert = false
     @State private var showHashtagSheet = false
+    @AccessibilityFocusState private var isTitleFocused: Bool
 
     var body: some View {
         ScrollView {
@@ -15,13 +15,10 @@ struct SettingsView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
+                    .accessibilityFocused($isTitleFocused)
 
                 settingsSection(title: "Voice") {
                     VolumeSettingView(viewModel: viewModel)
-                }
-
-                settingsSection(title: "Tutorial") {
-                    TutorialSettingsView(viewModel: viewModel)
                 }
 
                 settingsSection(title: "Default Spread") {
@@ -65,38 +62,6 @@ struct SettingsView: View {
                     .accessibilityValue(viewModel.hapticEnabled ? "on" : "off")
                 }
 
-                settingsSection(title: "Reset") {
-                    VStack(spacing: 12) {
-                        Button(action: {
-                            viewModel.resetTutorials()
-                        }) {
-                            HStack {
-                                Label("Reset Tutorials", systemImage: "arrow.counterclockwise")
-                                Spacer()
-                            }
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.black.opacity(0.5))
-                            .cornerRadius(12)
-                        }
-                        .accessibilityHint("Allows you to view tutorials again")
-
-                        Button(action: {
-                            showResetAlert = true
-                        }) {
-                            HStack {
-                                Label("Reset All Settings", systemImage: "trash")
-                                Spacer()
-                            }
-                            .foregroundColor(.white)
-                            .padding()
-                            .background(Color.red.opacity(0.5))
-                            .cornerRadius(12)
-                        }
-                        .accessibilityHint("Restores all settings to their defaults")
-                    }
-                }
-
                 VStack(spacing: 8) {
                     Text("Echo Tarot")
                         .font(.headline)
@@ -113,13 +78,10 @@ struct SettingsView: View {
         .sheet(isPresented: $showHashtagSheet) {
             HashtagSettingsView()
         }
-        .alert("Reset Settings", isPresented: $showResetAlert) {
-            Button("Cancel", role: .cancel) {}
-            Button("Reset", role: .destructive) {
-                viewModel.resetAllSettings()
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                isTitleFocused = true
             }
-        } message: {
-            Text("Restore all settings to their default values?")
         }
     }
 

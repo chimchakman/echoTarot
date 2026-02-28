@@ -6,7 +6,6 @@ import UIKit
 final class SettingsViewModel: ObservableObject {
     @Published var speechVolume: Float
     @Published var speechRate: Float
-    @Published var tutorialEnabled: Bool
     @Published var hapticEnabled: Bool
     @Published var defaultSpread: TarotSpread
 
@@ -15,7 +14,6 @@ final class SettingsViewModel: ObservableObject {
     init() {
         speechVolume = settingsManager.speechVolume
         speechRate = settingsManager.speechRate
-        tutorialEnabled = settingsManager.tutorialEnabled
         hapticEnabled = settingsManager.hapticEnabled
         defaultSpread = settingsManager.defaultSpread
     }
@@ -30,16 +28,6 @@ final class SettingsViewModel: ObservableObject {
         speechRate = value
         settingsManager.speechRate = value
         SpeechService.shared.speak("Speed test")
-    }
-
-    func toggleTutorial() {
-        tutorialEnabled.toggle()
-        settingsManager.tutorialEnabled = tutorialEnabled
-        HapticService.shared.selection()
-        let status = tutorialEnabled ? "on" : "off"
-        if !UIAccessibility.isVoiceOverRunning {
-            SpeechService.shared.speak("Tutorial \(status)")
-        }
     }
 
     func toggleHaptic() {
@@ -60,31 +48,6 @@ final class SettingsViewModel: ObservableObject {
         HapticService.shared.selection()
         if !UIAccessibility.isVoiceOverRunning {
             SpeechService.shared.speak("Default spread: \(spread.name)")
-        }
-    }
-
-    func resetTutorials() {
-        settingsManager.settings.homeTutorialShown = false
-        settingsManager.settings.logsTutorialShown = false
-        settingsManager.settings.settingsTutorialShown = false
-        HapticService.shared.success()
-        if !UIAccessibility.isVoiceOverRunning {
-            SpeechService.shared.speak("Tutorials reset")
-        }
-    }
-
-    func resetAllSettings() {
-        settingsManager.resetToDefaults()
-
-        speechVolume = settingsManager.speechVolume
-        speechRate = settingsManager.speechRate
-        tutorialEnabled = settingsManager.tutorialEnabled
-        hapticEnabled = settingsManager.hapticEnabled
-        defaultSpread = settingsManager.defaultSpread
-
-        HapticService.shared.success()
-        if !UIAccessibility.isVoiceOverRunning {
-            SpeechService.shared.speak("All settings reset")
         }
     }
 }

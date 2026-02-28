@@ -53,7 +53,7 @@ struct FullScreenGestureModifier: ViewModifier {
             content
                 .contentShape(Rectangle())
                 .simultaneousGesture(createTapGesture())
-                .simultaneousGesture(createSwipeGestures())
+                .gesture(createSwipeGestures())
                 .simultaneousGesture(createPinchGesture())
                 .simultaneousGesture(createLongPressGesture())
         }
